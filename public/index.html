@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>焕墟幻境 · 第一课「破壁」</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+:root {
+  --bg:    #08080f; --bg2: #0d0d1a; --bg3: #121220;
+  --red:   #c9626a; --redL: #e8959b;
+  --cyan:  #00ffd1; --cyanD: rgba(0,255,209,.12);
+  --gold:  #f0c060; --goldD: rgba(240,192,96,.12);
+  --pur:   #9b72e8; --purD:  rgba(155,114,232,.12);
+  --txt:   #ddd8cc; --dim:   #7a7870;
+  --bdr:   rgba(255,255,255,.07);
+  --ser:   'Noto Serif SC','Songti SC',serif;
+  --san:   'Noto Sans SC','PingFang SC',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--san);overflow:hidden}
+#cv{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.42}
+
+/* ── screens ── */
+.scr{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .6s}
+.scr.show{opacity:1;pointer-events:all}
+
+/* ── common ── */
+.badge{font-size:10px;letter-spacing:5px;color:var(--cyan);text-transform:uppercase;opacity:.65;margin-bottom:14px}
+.big-title{font-family:var(--ser);font-size:clamp(30px,6vw,62px);font-weight:700;background:linear-gradient(135deg,#f0c060 0%,#e8959b 45%,#00ffd1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;filter:drop-shadow(0 0 22px rgba(240,192,96,.22))}
+.sub{font-size:13px;color:var(--dim);letter-spacing:5px}
+.card{background:rgba(13,13,26,.97);border:1px solid var(--bdr);backdrop-filter:blur(10px)}
+.btn{font-family:var(--san);font-size:13px;letter-spacing:3px;cursor:pointer;border:none;outline:none;padding:13px 36px;transition:all .22s;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.btn-gold{background:linear-gradient(135deg,#b08030,#f0c060);color:var(--bg)}
+.btn-gold:hover{box-shadow:0 0 20px rgba(240,192,96,.4);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid var(--bdr);color:var(--dim)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.2);color:var(--txt)}
+.btn-cyan{background:transparent;border:1px solid var(--cyan);color:var(--cyan)}
+.btn-cyan:hover{background:var(--cyanD);box-shadow:0 0 16px rgba(0,255,209,.28)}
+.inp{width:100%;background:rgba(0,0,0,.5);border:1px solid var(--bdr);border-bottom-color:rgba(240,192,96,.28);color:var(--txt);font-family:var(--san);font-size:14px;padding:11px 13px;outline:none;transition:border-color .25s}
+.inp:focus{border-color:rgba(240,192,96,.5)}
+.inp::placeholder{color:var(--dim)}
+.inp-c{border-bottom-color:rgba(0,255,209,.28)}.inp-c:focus{border-color:rgba(0,255,209,.48)}
+.ta{resize:none;min-height:86px;line-height:1.8}
+.divider{display:flex;align-items:center;gap:14px;color:var(--dim);font-size:10px;letter-spacing:4px;margin:20px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--bdr),transparent)}
+.err{font-size:12px;color:var(--redL);margin-top:8px;min-height:18px}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(240,192,96,.18);border-radius:2px}
+
+/* ── AUTH ── */
+#s-auth{background:radial-gradient(ellipse at 50% 35%,#1a0a20 0%,#060609 65%)}
+.auth-w{width:min(420px,92vw)}
+.auth-logo{text-align:center;margin-bottom:34px}
+.tabs{display:flex;background:rgba(0,0,0,.4);padding:3px;border:1px solid var(--bdr);margin-bottom:26px;border-radius:2px}
+.tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:13px;letter-spacing:3px;color:var(--dim);transition:all .22s}
+.tab.on{background:rgba(240,192,96,.1);color:var(--gold)}
+.af{padding:26px 28px}
+.af label{display:block;font-size:10px;letter-spacing:3px;color:var(--dim);margin-bottom:7px;margin-top:16px}
+.af label:first-of-type{margin-top:0}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.ropt{padding:15px 10px;border:1px solid var(--bdr);cursor:pointer;text-align:center;transition:all .22s}
+.rico{font-size:20px;font-family:var(--ser);color:var(--dim);margin-bottom:5px}
+.rnm{font-size:13px;letter-spacing:2px;color:var(--dim)}
+.rht{font-size:11px;color:var(--dim);margin-top:3px;opacity:.55}
+.ropt.on.p{border-color:var(--gold);background:var(--goldD)}.ropt.on.p .rico,.ropt.on.p .rnm{color:var(--gold)}
+.ropt.on.c{border-color:var(--cyan);background:var(--cyanD)}.ropt.on.c .rico,.ropt.on.c .rnm{color:var(--cyan)}
+
+/* ── LOBBY ── */
+#s-lobby{background:radial-gradient(ellipse at 50% 40%,#0a0a18 0%,#060609 70%)}
+.lw{width:min(500px,92vw);text-align:center}
+.lcard{padding:38px 34px;margin-top:28px}
+.code{font-family:'Courier New',monospace;font-size:clamp(34px,8vw,52px);letter-spacing:14px;color:var(--cyan);padding:20px 28px;border:1px solid rgba(0,255,209,.22);background:rgba(0,255,209,.04);text-shadow:0 0 18px rgba(0,255,209,.5),0 0 36px rgba(0,255,209,.18);display:inline-block;margin:18px 0}
+.code-hint{font-size:12px;color:var(--dim);letter-spacing:2px;margin-bottom:22px}
+.wpulse{display:inline-flex;align-items:center;gap:10px;font-size:12px;color:var(--dim);letter-spacing:3px}
+.wdot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:blink 1.4s ease infinite}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+.joined-msg{display:none;padding:13px 18px;border:1px solid rgba(240,192,96,.28);background:var(--goldD);font-size:13px;color:var(--gold);letter-spacing:2px;margin:14px 0;animation:fu .5s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#lobby-start{display:none;margin-top:16px}
+
+/* ── CUTSCENE ── */
+#s-cut{background:#04040a;justify-content:flex-end;padding-bottom:46px}
+.c-art{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(155,114,232,.1) 0%,transparent 55%);display:flex;align-items:center;justify-content:center}
+.cw{width:200px;height:300px;animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.nbox{position:relative;z-index:5;width:min(680px,90vw);padding:24px 28px;margin:0 auto;background:rgba(10,10,20,.97);border:1px solid rgba(155,114,232,.22)}
+.nbox::before{content:'';position:absolute;top:-1px;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,var(--pur),transparent)}
+.nname{font-size:11px;color:var(--pur);letter-spacing:5px;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.nname::after{content:'';flex:1;height:1px;background:rgba(155,114,232,.15)}
+.ntxt{font-size:14px;line-height:2;color:var(--txt);min-height:52px}
+.nhint{font-size:11px;color:var(--dim);margin-top:5px}
+.nnxt{float:right;margin-top:16px;background:transparent;border:1px solid var(--pur);color:var(--pur);padding:8px 24px;font-size:12px;letter-spacing:3px;cursor:pointer;font-family:var(--san);transition:all .22s}
+.nnxt:hover{background:var(--purD)}.nnxt:disabled{opacity:.3;cursor:default}
+
+/* ── GAME ── */
+#s-game{flex-direction:column;justify-content:flex-start;align-items:stretch;overflow-y:auto}
+.hud{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:12px 26px;background:rgba(6,6,12,.97);border-bottom:1px solid var(--bdr);backdrop-filter:blur(10px)}
+.htitle{font-family:var(--ser);font-size:15px;color:var(--gold);letter-spacing:3px;flex-shrink:0}
+.strack{flex:1;display:flex;gap:5px;align-items:center}
+.spip{flex:1;height:2px;background:rgba(255,255,255,.05);border-radius:1px;transition:background .5s;position:relative}
+.spip.done{background:rgba(240,192,96,.45)}.spip.now{background:var(--cyan);box-shadow:0 0 7px var(--cyan)}
+.plabel{position:absolute;top:9px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--dim);white-space:nowrap;letter-spacing:1px}
+.hrole{flex-shrink:0;padding:5px 13px;font-size:11px;letter-spacing:2px;border:1px solid;border-radius:1px}
+.hrole.parent{border-color:rgba(240,192,96,.28);color:var(--gold);background:var(--goldD)}
+.hrole.child{border-color:rgba(0,255,209,.22);color:var(--cyan);background:var(--cyanD)}
+
+.panel{display:none;flex-direction:column;max-width:1060px;width:100%;margin:0 auto;padding:34px 26px;min-height:calc(100vh - 54px)}
+.panel.show{display:flex;animation:fu .4s ease}
+.ph{text-align:center;margin-bottom:34px}
+.pnum{font-size:10px;color:var(--cyan);letter-spacing:6px;margin-bottom:8px}
+.pnm{font-family:var(--ser);font-size:clamp(22px,3.5vw,32px);color:var(--gold);margin-bottom:5px}
+.psub{font-size:12px;color:var(--dim);letter-spacing:4px}
+
+.nr{display:flex;gap:13px;align-items:flex-start;padding:17px 20px;margin-bottom:26px;background:rgba(155,114,232,.05);border:1px solid rgba(155,114,232,.12)}
+.nav{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#6030a0,#9b72e8);display:flex;align-items:center;justify-content:center;font-family:var(--ser);font-size:16px;color:#fff}
+.nlb{font-size:10px;color:var(--pur);letter-spacing:3px;margin-bottom:5px}
+.nbd{font-size:13px;color:rgba(220,210,248,.88);line-height:1.9}
+
+/* stage 1 */
+.sf{display:flex;flex-direction:column;gap:18px}
+.qc{padding:22px 26px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(18,14,8,.9),rgba(10,8,18,.9));border:1px solid rgba(240,192,96,.11)}
+.qc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.qc.c{border-color:rgba(0,255,209,.11)}.qc.c::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.qnum{font-size:10px;letter-spacing:5px;color:var(--gold);margin-bottom:7px}.qc.c .qnum{color:var(--cyan)}
+.qtxt{font-family:var(--ser);font-size:17px;color:var(--txt);margin-bottom:14px;line-height:1.6}
+.oath{display:flex;align-items:center;gap:13px;padding:16px 20px;border:1px solid rgba(240,192,96,.12);background:rgba(240,192,96,.03);cursor:pointer;transition:all .22s;user-select:none}
+.oath:hover{border-color:rgba(240,192,96,.28)}.oath.on{border-color:var(--gold);background:var(--goldD)}
+.ocheck{width:20px;height:20px;border:1px solid var(--gold);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .22s}
+.oath.on .ocheck{background:var(--gold);color:var(--bg)}
+.otxt{font-size:13px;color:var(--dim);letter-spacing:2px}.oath.on .otxt{color:var(--gold)}
+
+/* wait overlay */
+.wov{display:none;position:fixed;inset:0;z-index:40;background:rgba(4,4,12,.92);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center}
+.wov.show{display:flex}
+.wring{width:76px;height:76px;border-radius:50%;border:2px solid rgba(0,255,209,.14);border-top-color:var(--cyan);animation:spin 1.5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wtitle{font-family:var(--ser);font-size:22px;color:var(--gold)}
+.wsub{font-size:12px;color:var(--dim);letter-spacing:3px}
+.wstat{font-size:12px;padding:8px 18px;border:1px solid rgba(155,114,232,.22);color:var(--pur);letter-spacing:2px}
+
+/* stage 2 */
+.s2g{display:grid;grid-template-columns:1fr 50px 1fr;gap:0;align-items:start}
+.s2p{padding:20px;border:1px solid var(--bdr)}
+.s2p.mine{border-color:rgba(240,192,96,.11)}.s2p.theirs{border-color:rgba(0,255,209,.09)}
+.s2t{font-size:10px;letter-spacing:4px;margin-bottom:16px;display:flex;align-items:center;gap:8px;opacity:.7}
+.s2p.mine .s2t{color:var(--gold)}.s2p.theirs .s2t{color:var(--cyan)}
+.s2d{display:flex;align-items:center;justify-content:center;position:relative}
+.s2d::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(180deg,transparent,rgba(155,114,232,.32),transparent)}
+.s2ic{width:34px;height:34px;border-radius:50%;background:rgba(155,114,232,.1);border:1px solid rgba(155,114,232,.22);display:flex;align-items:center;justify-content:center;font-size:14px;font-family:var(--ser);color:var(--pur);position:relative;z-index:1;animation:spin 12s linear infinite}
+.ac{margin-bottom:14px;padding:13px 15px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.04);transition:border-color .25s}
+.ac.mg{border-color:rgba(240,192,96,.38);background:rgba(240,192,96,.04)}
+.ac.mp{border-color:rgba(155,114,232,.38);background:rgba(155,114,232,.04)}
+.aql{font-size:10px;color:var(--dim);letter-spacing:3px;margin-bottom:7px}
+.atxt{font-size:13px;color:var(--txt);line-height:1.8;min-height:34px;word-break:break-all}
+.atxt.e{color:rgba(255,255,255,.18);font-style:italic}
+.mrow{display:flex;gap:7px;margin-top:11px}
+.mb{padding:5px 14px;font-size:11px;cursor:pointer;letter-spacing:2px;border:1px solid rgba(255,255,255,.07);background:transparent;color:var(--dim);font-family:var(--san);transition:all .2s;border-radius:1px}
+.mb.g:hover,.mb.g.on{border-color:var(--gold);color:var(--gold);background:var(--goldD)}
+.mb.p:hover,.mb.p.on{border-color:var(--pur);color:var(--pur);background:var(--purD)}
+.mind{font-size:10px;letter-spacing:2px;padding:3px 9px;margin-top:8px;display:inline-block}
+.mind.gold{background:var(--goldD);color:var(--gold);border:1px solid rgba(240,192,96,.22)}
+.mind.pur{background:var(--purD);color:var(--pur);border:1px solid rgba(155,114,232,.22)}
+.resbox{display:none;margin-top:10px;padding:9px 13px;background:linear-gradient(135deg,var(--goldD),var(--purD));border:1px solid rgba(240,192,96,.28);font-size:11px;color:var(--gold);letter-spacing:3px;animation:gp 2s ease infinite}
+@keyframes gp{0%,100%{box-shadow:0 0 7px rgba(240,192,96,.14)}50%{box-shadow:0 0 20px rgba(240,192,96,.38)}}
+#res-banner{display:none;margin-top:16px;padding:15px 20px;text-align:center;background:linear-gradient(135deg,var(--goldD),var(--purD));border:1px solid rgba(240,192,96,.28);font-family:var(--ser);font-size:16px;color:var(--gold);letter-spacing:4px;animation:gp 2s infinite}
+
+/* stage 3 */
+.vframe{padding:34px;text-align:center;margin-bottom:26px;background:radial-gradient(ellipse at 50% 50%,rgba(155,114,232,.07) 0%,transparent 65%);border:1px solid rgba(155,114,232,.09)}
+.vtxt{font-family:var(--ser);font-size:15px;color:rgba(220,210,255,.78);line-height:2.2;max-width:540px;margin:0 auto}
+.sc{padding:20px 24px;margin-bottom:16px;border:1px solid var(--bdr)}
+.slb{font-size:10px;letter-spacing:4px;margin-bottom:11px}
+.sc.p .slb{color:var(--gold)}.sc.ch .slb{color:var(--cyan)}
+.sc.p .inp{border-bottom-color:rgba(240,192,96,.28)}.sc.ch .inp{border-bottom-color:rgba(0,255,209,.28)}
+.psh{margin-top:10px;padding:11px 13px;background:rgba(155,114,232,.05);border-left:2px solid var(--pur);font-size:13px;color:rgba(200,190,245,.85);line-height:1.8;display:none;animation:fu .4s ease}
+
+/* stage 4 */
+.kc{padding:24px 28px;margin-bottom:16px;border:1px solid rgba(240,192,96,.12);background:linear-gradient(135deg,rgba(12,9,20,.9),rgba(8,6,14,.9));position:relative}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.kt{font-family:var(--ser);font-size:17px;color:var(--gold);margin-bottom:18px}
+.rule{display:flex;gap:13px;padding:11px 0;border-bottom:1px solid var(--bdr)}
+.rule:last-of-type{border-bottom:none}
+.rrl{font-size:10px;letter-spacing:2px;margin-bottom:4px}.rule.p .rrl{color:var(--gold)}.rule.c .rrl{color:var(--cyan)}
+.rtxt{font-size:13px;color:var(--txt);line-height:1.8}
+.rno{font-size:12px;color:var(--redL);margin-top:5px;opacity:.8}
+.rw{display:flex;gap:17px;padding:17px 20px;margin-bottom:13px;border:1px solid rgba(240,192,96,.11);cursor:default;transition:border-color .22s}
+.rw:hover{border-color:rgba(240,192,96,.28)}
+.rwi{font-family:var(--ser);font-size:26px;color:var(--gold);flex-shrink:0;width:38px;text-align:center}
+.rwn{font-family:var(--ser);font-size:15px;color:var(--gold);margin-bottom:5px}
+.rwd{font-size:12px;color:var(--dim);line-height:1.7}
+.cbox{padding:26px;border:1px solid rgba(240,192,96,.16);background:rgba(8,6,14,.97);text-align:center;margin-bottom:20px}
+.ctit{font-family:var(--ser);font-size:18px;color:var(--gold);margin-bottom:7px}
+.csub{font-size:12px;color:var(--dim);letter-spacing:2px;margin-bottom:22px}
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ss{border:1px dashed rgba(255,255,255,.1);padding:18px;min-height:78px;cursor:pointer;transition:all .28s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px}
+.ss:hover{border-color:rgba(240,192,96,.32)}.ss.done{border-color:var(--gold);border-style:solid;background:var(--goldD)}
+.ssl{font-size:10px;color:var(--dim);letter-spacing:3px}
+.ssm{font-family:var(--ser);font-size:25px;color:var(--gold);opacity:0;transition:opacity .5s}.ss.done .ssm{opacity:1}
+.sst{font-size:10px;color:var(--dim)}
+
+.brow{display:flex;gap:11px;justify-content:flex-end;margin-top:26px}
+
+/* ── COMPLETE ── */
+#s-done{background:radial-gradient(ellipse at 50% 40%,rgba(240,192,96,.08) 0%,#04040a 60%);text-align:center;padding:38px}
+.di{font-family:var(--ser);font-size:56px;color:var(--gold);margin-bottom:18px;animation:pop .8s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.dt{font-family:var(--ser);font-size:clamp(24px,5vw,42px);color:var(--gold);margin-bottom:13px}
+.dd{font-size:14px;color:var(--dim);line-height:2;margin-bottom:34px;max-width:440px}
+.cr{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-bottom:34px}
+.chip{padding:8px 16px;border:1px solid rgba(240,192,96,.26);background:var(--goldD);font-size:12px;color:var(--gold);letter-spacing:2px;opacity:0;animation:fu .5s forwards}
+.chip:nth-child(1){animation-delay:.3s}.chip:nth-child(2){animation-delay:.55s}.chip:nth-child(3){animation-delay:.8s}
+.tea{max-width:440px;margin:0 auto 34px;padding:18px 24px;border:1px solid rgba(155,114,232,.16);background:rgba(155,114,232,.05);font-family:var(--ser);font-size:14px;color:rgba(200,190,248,.78);line-height:2}
+
+/* toast */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:999;padding:11px 22px;font-size:13px;letter-spacing:2px;background:rgba(10,10,20,.97);border:1px solid;opacity:0;transition:opacity .28s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}#toast.ok{border-color:rgba(0,255,209,.38);color:var(--cyan)}#toast.er{border-color:rgba(201,98,106,.38);color:var(--redL)}
+
+@media(max-width:680px){.s2g{grid-template-columns:1fr}.s2d{display:none}.srow{grid-template-columns:1fr}.hud{padding:10px 14px;gap:10px}}
+
+/* 题目释义提示 */
+.qe{position:relative}
+.qtxt{cursor:pointer;user-select:none}
+.qtxt::after{content:'  释义 ▿';font-size:9px;color:rgba(0,255,209,.35);letter-spacing:1px}
+.qe.open .qtxt::after{content:'  收起 ▵';color:var(--cyan)}
+.qexpl{display:none;margin-top:8px;padding:9px 12px;background:rgba(0,255,209,.04);border:1px solid rgba(0,255,209,.15);border-left:2px solid var(--cyan);color:rgba(150,240,220,.85);font-size:12px;letter-spacing:.5px;line-height:1.9;font-family:var(--san)}
+.qe.open .qexpl{display:block}
+/* 对方分享只读框 */
+.psh-wrap{margin-top:18px;padding:16px 18px;border:1px solid rgba(155,114,232,.18);background:rgba(155,114,232,.04)}
+.psh-wrap .slb{color:var(--pur);margin-bottom:10px}
+.psh-ro{font-size:13px;color:rgba(200,190,248,.85);line-height:1.9;min-height:36px;white-space:pre-wrap}
+.psh-ro.empty{color:rgba(255,255,255,.22);font-style:italic}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<!-- ── AUTH ─────────────────────────────────────── -->
+<div id="s-auth" class="scr">
+  <div class="auth-w">
+    <div class="auth-logo">
+      <div class="badge">焕墟幻境 · Season 01</div>
+      <div class="big-title" style="font-size:clamp(26px,5vw,44px)">识海关</div>
+      <div class="sub" style="margin-top:6px">踏入须先验明身份</div>
+    </div>
+    <div class="card" style="border-color:rgba(240,192,96,.2)">
+      <div class="tabs">
+        <div class="tab on" id="tab-l" onclick="switchTab('l')">登 录</div>
+        <div class="tab"    id="tab-r" onclick="switchTab('r')">注 册</div>
+      </div>
+      <div class="af">
+        <label>邮 箱</label>
+        <input class="inp" id="a-em" type="email" placeholder="your@email.com">
+        <label>密 码</label>
+        <input class="inp" id="a-pw" type="password" placeholder="••••••••">
+        <div id="reg-x" style="display:none">
+          <label style="margin-top:18px">身份选择</label>
+          <div class="rgrid">
+            <div class="ropt p" id="ro-p" onclick="pickRole('parent')">
+              <div class="rico">护</div>
+              <div class="rnm">护道者</div>
+              <div class="rht">家 长</div>
+            </div>
+            <div class="ropt c" id="ro-c" onclick="pickRole('child')">
+              <div class="rico">求</div>
+              <div class="rnm">求道者</div>
+              <div class="rht">孩 子</div>
+            </div>
+          </div>
+        </div>
+        <div class="err" id="a-err"></div>
+        <div style="margin-top:18px">
+          <button class="btn btn-gold" style="width:100%" id="a-btn" onclick="doAuth()">踏入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LOBBY ─────────────────────────────────────── -->
+<div id="s-lobby" class="scr">
+  <div class="lw">
+    <div class="badge">识海关 · 匹配</div>
+    <div class="big-title" id="lbtitle" style="font-size:clamp(24px,4.5vw,40px)">等待另一半</div>
+
+    <!-- 求道者（孩子）：展示邀请码，等待护道者加入 -->
+    <div id="lb-c" style="display:none">
+      <div class="card lcard" style="border-color:rgba(0,255,209,.18)">
+        <div style="font-size:11px;color:var(--dim);letter-spacing:3px;margin-bottom:4px">您的邀请码</div>
+        <div class="code" id="code-txt">------</div>
+        <div class="code-hint">将此邀请码告知护道者，待其加入后方可出发</div>
+        <div class="wpulse"><div class="wdot"></div>等待护道者踏入识海关</div>
+        <div class="joined-msg" id="joined-msg">护道者已踏入，可以出发了</div>
+        <div id="lobby-start"><button class="btn btn-gold" onclick="goCut()">出发 →</button></div>
+      </div>
+      <div style="text-align:center;margin-top:14px">
+        <button class="btn btn-ghost" style="font-size:11px;padding:8px 20px" onclick="newSess()">重新生成邀请码</button>
+      </div>
+    </div>
+
+    <!-- 护道者（家长）：输入孩子的邀请码 -->
+    <div id="lb-p" style="display:none">
+      <div class="card lcard" style="border-color:rgba(240,192,96,.18)">
+        <div style="font-size:11px;color:var(--dim);letter-spacing:3px;margin-bottom:14px">输入求道者的邀请码</div>
+        <input class="inp" id="code-in" type="text" maxlength="6" placeholder="6位邀请码"
+               style="text-align:center;font-size:20px;letter-spacing:8px;text-transform:uppercase">
+        <div class="err" id="ce-err"></div>
+        <div style="margin-top:16px">
+          <button class="btn btn-gold" style="width:100%" onclick="joinSess()">踏入 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;bottom:18px;right:18px">
+    <button class="btn btn-ghost" style="font-size:11px;padding:7px 15px" onclick="logout()">退出登录</button>
+  </div>
+</div>
+
+<!-- ── CUTSCENE ────────────────────────────────── -->
+<div id="s-cut" class="scr">
+  <div class="c-art">
+    <div class="cw">
+      <svg viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <ellipse cx="100" cy="270" rx="48" ry="13" fill="rgba(155,114,232,.1)"/>
+        <path d="M62 132 Q53 190 50 265 Q82 284 100 284 Q118 284 150 265 Q147 190 138 132Z" fill="#160a28" stroke="rgba(155,114,232,.3)" stroke-width="1"/>
+        <path d="M83 150 L81 230" stroke="rgba(240,192,96,.18)" stroke-width="1" stroke-dasharray="3 4"/>
+        <path d="M117 150 L119 230" stroke="rgba(240,192,96,.18)" stroke-width="1" stroke-dasharray="3 4"/>
+        <path d="M86 138 Q100 148 114 138" stroke="rgba(240,192,96,.4)" stroke-width="1.5" fill="none"/>
+        <path d="M62 146 Q36 164 31 188 Q40 192 45 188 Q54 170 68 162Z" fill="#160a28" stroke="rgba(155,114,232,.28)" stroke-width="1"/>
+        <path d="M138 146 Q164 164 169 188 Q160 192 155 188 Q146 170 132 162Z" fill="#160a28" stroke="rgba(155,114,232,.28)" stroke-width="1"/>
+        <rect x="25" y="183" width="20" height="12" rx="3" fill="rgba(240,192,96,.1)" stroke="rgba(240,192,96,.42)" stroke-width="1"/>
+        <rect x="95" y="108" width="10" height="26" rx="4" fill="#c8a898"/>
+        <ellipse cx="100" cy="93" rx="27" ry="32" fill="#c8a898"/>
+        <path d="M73 78 Q73 44 100 42 Q127 44 127 78" fill="#b8cce8"/>
+        <path d="M73 84 Q63 74 65 60 Q69 50 74 51" fill="#b8cce8"/>
+        <path d="M127 84 Q137 74 135 60 Q131 50 126 51" fill="#b8cce8"/>
+        <path d="M100 42 Q96 26 98 16" stroke="#b8cce8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="98" cy="14" r="2.5" fill="rgba(240,192,96,.82)"/>
+        <ellipse cx="110" cy="85" rx="9" ry="6" fill="none" stroke="rgba(240,192,96,.6)" stroke-width="1.5"/>
+        <line x1="119" y1="84" x2="126" y2="83" stroke="rgba(240,192,96,.6)" stroke-width="1"/>
+        <ellipse cx="89" cy="85" rx="4.5" ry="5" fill="white"/>
+        <ellipse cx="89" cy="86" rx="2.8" ry="3.2" fill="#3a1868"/>
+        <circle cx="90" cy="84" r=".9" fill="white"/>
+        <path d="M83 79 Q89 76 95 79" stroke="#5a3820" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M104 78 Q110 75 116 77" stroke="#5a3820" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M94 100 Q100 105 106 100" stroke="#906050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <circle cx="73" cy="93" r="2.5" fill="none" stroke="rgba(240,192,96,.5)" stroke-width="1"/>
+        <circle cx="73" cy="99" r="1.8" fill="rgba(240,192,96,.3)"/>
+        <circle cx="154" cy="122" r="1.8" fill="rgba(0,255,209,.7)">
+          <animate attributeName="opacity" values="0;1;0" dur="2.2s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="122;112;122" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="48" cy="142" r="1.4" fill="rgba(155,114,232,.75)">
+          <animate attributeName="opacity" values="0;.75;0" dur="2.8s" begin="1s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+  <div class="nbox">
+    <div class="nname">· 烛阴子 · 守境人 ·</div>
+    <div class="ntxt" id="ctxt"></div>
+    <div class="nhint" id="chint"></div>
+    <div style="overflow:hidden">
+      <button class="nnxt" id="cbtn" onclick="nextLine()">继续</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GAME ──────────────────────────────────────── -->
+<div id="s-game" class="scr">
+  <div class="hud">
+    <div class="htitle">焕墟幻境</div>
+    <div class="strack">
+      <div class="spip" id="p1"><div class="plabel">分神化境</div></div>
+      <div class="spip" id="p2"><div class="plabel">双镜交辉</div></div>
+      <div class="spip" id="p3"><div class="plabel">真言法会</div></div>
+      <div class="spip" id="p4"><div class="plabel">持光者契约</div></div>
+    </div>
+    <div class="hrole" id="hrole">--</div>
+  </div>
+
+  <!-- Panel 1 -->
+  <div class="panel show" id="pn1">
+    <div class="ph">
+      <div class="pnum">第一关 · STAGE 01</div>
+      <div class="pnm">分神化境</div>
+      <div class="psub">异步神识铭刻 · 各自如实作答</div>
+    </div>
+    <div class="nr">
+      <div class="nav">烛</div>
+      <div>
+        <div class="nlb">烛阴子</div>
+        <div class="nbd" id="s1npc">结界已布，对方界面不可见。此非考校，乃绘心。道心惟微，允许犹豫。</div>
+      </div>
+    </div>
+    <!-- 家长表单 -->
+    <div class="sf" id="fp" style="display:none">
+      <div style="text-align:center;margin-bottom:3px"><span style="font-size:10px;color:var(--gold);letter-spacing:4px">护道者卷 · 天问三则</span></div>
+      <div class="qc">
+        <div class="qnum">Q 01 · 微光侦测</div>
+        <div class="qe">
+          <div class="qtxt" onclick="this.closest('.qe').classList.toggle('open')">寻灵光：近日何时，见求道者道心最明？</div>
+          <div class="qexpl">最近什么时候，你觉得孩子状态最好、最积极？</div>
+        </div>
+        <textarea class="inp ta" id="pq1" placeholder="在此处落笔……"></textarea>
+      </div>
+      <div class="qc">
+        <div class="qnum">Q 02 · 压力地貌</div>
+        <div class="qe">
+          <div class="qtxt" onclick="this.closest('.qe').classList.toggle('open')">观心劫：汝见其识海中有何郁结之气？</div>
+          <div class="qexpl">你觉得孩子最近有什么心结或压力？</div>
+        </div>
+        <textarea class="inp ta" id="pq2" placeholder="在此处落笔……"></textarea>
+      </div>
+      <div class="qc">
+        <div class="qnum">Q 03 · 未标之地</div>
+        <div class="qe">
+          <div class="qtxt" onclick="this.closest('.qe').classList.toggle('open')">探秘境：其心中可有汝未至之境？</div>
+          <div class="qexpl">你觉得孩子内心有没有你还不了解的地方？</div>
+        </div>
+        <textarea class="inp ta" id="pq3" placeholder="在此处落笔……"></textarea>
+      </div>
+      <div class="oath" id="oa-p" onclick="toggleOath()">
+        <div class="ocheck" id="ock-p">✓</div>
+        <div class="otxt">以道心为誓，所言皆真</div>
+      </div>
+    </div>
+    <!-- 孩子表单 -->
+    <div class="sf" id="fc" style="display:none">
+      <div style="text-align:center;margin-bottom:3px"><span style="font-size:10px;color:var(--cyan);letter-spacing:4px">求道者卷 · 自省三则</span></div>
+      <div class="qc c">
+        <div class="qnum">Q 01 · 微光自察</div>
+        <div class="qe">
+          <div class="qtxt" onclick="this.closest('.qe').classList.toggle('open')">问本心：近日何时，尔最感通明自在？</div>
+          <div class="qexpl">最近什么时候，你感觉最轻松、最像自己？</div>
+        </div>
+        <textarea class="inp inp-c ta" id="cq1" placeholder="在此处落笔……"></textarea>
+      </div>
+      <div class="qc c">
+        <div class="qnum">Q 02 · 压力自陈</div>
+        <div class="qe">
+          <div class="qtxt" onclick="this.closest('.qe').classList.toggle('open')">诉心障：今有何事，如劫雷盘绕？</div>
+          <div class="qexpl">最近有什么事情让你感到很有压力或烦恼？</div>
+        </div>
+        <textarea class="inp inp-c ta" id="cq2" placeholder="在此处落笔……"></textarea>
+      </div>
+      <div class="qc c">
+        <div class="qnum">Q 03 · 秘境自观</div>
+        <div class="qe">
+          <div class="qtxt" onclick="this.closest('.qe').classList.toggle('open')">藏幽处：可有洞天，未示于至亲？</div>
+          <div class="qexpl">有没有什么想法或感受，你还没有跟家人说过？</div>
+        </div>
+        <textarea class="inp inp-c ta" id="cq3" placeholder="在此处落笔……"></textarea>
+      </div>
+      <div class="oath" id="oa-c" onclick="toggleOath()">
+        <div class="ocheck" id="ock-c">✓</div>
+        <div class="otxt">以道心为誓，所言皆真</div>
+      </div>
+    </div>
+    <div class="brow">
+      <button class="btn btn-cyan" onclick="submitAns()">玉简已成，提交 →</button>
+    </div>
+  </div>
+
+  <!-- Panel 2 -->
+  <div class="panel" id="pn2">
+    <div class="ph">
+      <div class="pnum">第二关 · STAGE 02</div>
+      <div class="pnm">双镜交辉</div>
+      <div class="psub">灵图交换 · 标注认同与好奇</div>
+    </div>
+    <div class="nr">
+      <div class="nav">烛</div>
+      <div>
+        <div class="nlb">烛阴子</div>
+        <div class="nbd">两卷灵图已成，现在——交换。<br>
+          见另一半所书，感温暖确认者施<strong style="color:var(--gold)">光印</strong>；感意外好奇者施<strong style="color:var(--pur)">雷纹</strong>。
+          仅可标注另一半之卷。</div>
+      </div>
+    </div>
+    <div class="s2g">
+      <div class="s2p mine"><div class="s2t" id="s2lt">我的灵图</div><div id="s2lc"></div></div>
+      <div class="s2d"><div class="s2ic">☯</div></div>
+      <div class="s2p theirs"><div class="s2t" id="s2rt">另一半的灵图</div><div id="s2rc"></div></div>
+    </div>
+    <div id="res-banner">两心共鸣，光彻九霄</div>
+    <div class="brow">
+      <button class="btn btn-ghost" onclick="goPanel(1)">← 返回</button>
+      <button class="btn btn-cyan"  onclick="goPanel(3)">标记完成，前往法会 →</button>
+    </div>
+  </div>
+
+  <!-- Panel 3 -->
+  <div class="panel" id="pn3">
+    <div class="ph">
+      <div class="pnum">第三关 · STAGE 03</div>
+      <div class="pnm">真言法会</div>
+      <div class="psub">语音/文字共鸣 · 烛阴子引导深谈</div>
+    </div>
+    <div class="vframe">
+      <div class="vtxt">
+        "此乃认知图式之异。护道者以爱之目绘，求道者以真之心感。<br>
+        今日非判高下，乃并置双图，见视角之差——<strong style="color:var(--cyan)">此即理解之始。</strong>"
+      </div>
+    </div>
+    <div class="nr">
+      <div class="nav">烛</div>
+      <div>
+        <div class="nlb">烛阴子</div>
+        <div class="nbd">请护道者分享——"<strong style="color:var(--gold)">汝于求道者卷中，见何微光最暖？</strong>"<br>
+          求道者，见护道者所书，可有一语相回？</div>
+      </div>
+    </div>
+    <!-- 我的分享输入（按角色显示其中一个） -->
+    <div class="sc p" id="sh-mine-p" style="display:none">
+      <div class="slb">护道者分享</div>
+      <textarea class="inp ta" id="sh-p" placeholder="孩子写的哪一条最令你温暖？请分享……" oninput="onShare('parent')"></textarea>
+    </div>
+    <div class="sc ch" id="sh-mine-c" style="display:none">
+      <div class="slb">求道者分享</div>
+      <textarea class="inp inp-c ta" id="sh-c" placeholder="家长写的哪条让你意外？你想对他们说什么……" oninput="onShare('child')"></textarea>
+    </div>
+    <!-- 对方的分享（只读，实时同步） -->
+    <div class="psh-wrap" id="partner-share-wrap" style="display:none">
+      <div class="slb" id="partner-share-lbl">对方的分享</div>
+      <div class="psh-ro empty" id="partner-share-txt">等待对方输入…</div>
+    </div>
+    <div class="brow">
+      <button class="btn btn-ghost" onclick="goPanel(2)">← 返回</button>
+      <button class="btn btn-gold"  onclick="goPanel(4)">法会已毕，接取契约 →</button>
+    </div>
+  </div>
+
+  <!-- Panel 4 -->
+  <div class="panel" id="pn4">
+    <div class="ph">
+      <div class="pnum">第四关 · STAGE 04</div>
+      <div class="pnm">持光者契约</div>
+      <div class="psub">功法传承 · 今夜试炼</div>
+    </div>
+    <div class="kc">
+      <div class="kt">借光诀 · 今夜功法</div>
+      <div class="rule p">
+        <div>
+          <div class="rrl">护道者心法（家长）</div>
+          <div class="rtxt">问而非断，听而非评<br><span style="color:var(--cyan)">「能多说点吗？」「你的意思是……对吗？」</span></div>
+          <div class="rno">禁语：「你怎么能这么想？」「不对，你应该……」</div>
+        </div>
+      </div>
+      <div class="rule c">
+        <div>
+          <div class="rrl">求道者心法（孩子）</div>
+          <div class="rtxt">释而非争，明而非藏<br><span style="color:var(--gold)">「我当时其实是……」「我想表达的是……」</span></div>
+          <div class="rno">禁语：「你不懂我！」「算了不说了……」</div>
+        </div>
+      </div>
+    </div>
+    <div class="rw">
+      <div class="rwi">鑰</div>
+      <div>
+        <div class="rwn">持光者秘钥</div>
+        <div class="rwd">借此钥，可于今夜开启心门，借光而谈。今晚回家后，找一个安静时刻聊聊。</div>
+      </div>
+    </div>
+    <div class="rw">
+      <div class="rwi">卷</div>
+      <div>
+        <div class="rwn">今夜试炼卷</div>
+        <div class="rwd">取卷上一条裂隙，行借光谈话十刻（10分钟）。选一道标记了雷纹的题目，孩子多说，家长多问，不吵架，只理解。</div>
+      </div>
+    </div>
+    <div class="cbox">
+      <div class="ctit">立下契约</div>
+      <div class="csub">双方共同签押，今夜必行借光谈话</div>
+      <div class="srow">
+        <div class="ss" id="ss-p" onclick="signIt('parent')">
+          <div class="ssl">护道者（家长）签押</div>
+          <div class="ssm" id="sm-p">护</div>
+          <div class="sst" id="st-p"></div>
+        </div>
+        <div class="ss" id="ss-c" onclick="signIt('child')">
+          <div class="ssl">求道者（孩子）签押</div>
+          <div class="ssm" id="sm-c">求</div>
+          <div class="sst" id="st-c"></div>
+        </div>
+      </div>
+    </div>
+    <div class="brow">
+      <button class="btn btn-ghost" onclick="goPanel(3)">← 返回</button>
+      <button class="btn btn-gold"  onclick="goComplete()">契约已立，完成本课</button>
+    </div>
+  </div>
+</div>
+
+<!-- wait overlay -->
+<div class="wov" id="wov">
+  <div class="wring"></div>
+  <div class="wtitle">玉简已提交</div>
+  <div class="wsub">等待另一半完成作答</div>
+  <div class="wstat" id="wstat">另一半正在入定中...</div>
+</div>
+
+<!-- ── COMPLETE ──────────────────────────────────── -->
+<div id="s-done" class="scr">
+  <div class="di">光</div>
+  <div class="dt">破壁成功</div>
+  <p class="dd">两张灵图已并置，裂隙已成光之通道。<br>今夜试炼已接取——<strong style="color:var(--gold)">十分钟，只是理解的开始。</strong></p>
+  <div class="cr">
+    <div class="chip">称号：破壁者</div>
+    <div class="chip">元力值 +50</div>
+    <div class="chip">图鉴：太虚识典 第一页</div>
+  </div>
+  <div class="tea">
+    烛阴子：「三日后，汝等将化身<strong style="color:var(--pur)">心流侦探</strong>，<br>
+    于识海中寻专注之火种……」
+  </div>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-cyan" onclick="newGame()">开启新局</button>
+    <button class="btn btn-ghost" onclick="logout()">退出登录</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+(function(){
+  const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+  let W,H,pts=[];
+  const C=['rgba(155,114,232,','rgba(0,255,209,','rgba(240,192,96,'];
+  function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}rs();addEventListener('resize',rs);
+  for(let i=0;i<70;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.24,vy:(Math.random()-.5)*.24,r:Math.random()*1.4+.3,c:C[i%3],a:Math.random()*.32+.07,life:Math.random()});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.hypot(dx,dy);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(155,114,232,${.028*(1-d/110)})`;ctx.lineWidth=.4;ctx.stroke();}}
+    pts.forEach(p=>{p.life+=.005;const a=p.a*Math.sin(p.life*Math.PI);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+Math.max(0,a)+')';ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;if(p.life>1){p.life=0;p.a=Math.random()*.32+.07;}});
+    requestAnimationFrame(draw);
+  }draw();
+})();
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const A={
+  token:null,user:null,session:null,
+  oath:false,submitted:false,partnerDone:false,
+  ans:{parent:null,child:null},marks:[],
+  es:null,cutIdx:0
+};
+
+const LINES=[
+  {t:"欢迎踏入识海关。我是守境人烛阴子，掌管此地的「光之法则」。",h:"（银发少年调整单片眼镜，展开发光卷轴）"},
+  {t:"你们看周围这迷雾——它不是障碍，而是你们各自心域的边界。",h:"（手势一扫，迷雾轻轻涌动）"},
+  {t:"墙壁护人安全，亦隔绝了星光。今日我们不拆墙，只拍一张「灵识映像」——看清纹理，发现那天然的缝隙。",h:"（卷轴展开，现出两张交叠的地图影像）"},
+  {t:"记住：缝隙不是破损，是光与风唯一的通道。护道者手持「外境图」，求道者内藏「心域图」。",h:"（双眼闪烁金光，语气温柔而坚定）"},
+  {t:"只有当两图交叠，那些看似错位的「裂隙」，才会成为光之通道……准备好了吗？",h:"（卷轴化为两枚玉简，分向两端）"}
+];
+
+const QS={
+  parent:[{l:'微光侦测',t:'寻灵光：近日何时，见求道者道心最明？'},{l:'压力地貌',t:'观心劫：汝见其识海中有何郁结之气？'},{l:'未标之地',t:'探秘境：其心中可有汝未至之境？'}],
+  child: [{l:'微光自察',t:'问本心：近日何时，尔最感通明自在？'},{l:'压力自陈',t:'诉心障：今有何事，如劫雷盘绕？'},{l:'秘境自观',t:'藏幽处：可有洞天，未示于至亲？'}]
+};
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('show'));document.getElementById(id).classList.add('show');}
+function toast(m,t='ok'){const el=document.getElementById('toast');el.textContent=m;el.className='show '+t;clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2700);}
+function typewrite(el,txt,spd=28,cb){el.textContent='';let i=0;function go(){if(i<txt.length){el.textContent+=txt[i++];setTimeout(go,spd);}else if(cb)cb();}go();}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+async function api(m,url,d){
+  const o={method:m,headers:{'Content-Type':'application/json'}};
+  if(A.token)o.headers['Authorization']='Bearer '+A.token;
+  if(d)o.body=JSON.stringify(d);
+  const r=await fetch(url,o),j=await r.json();
+  if(!r.ok)throw new Error(j.error||'请求失败');
+  return j;
+}
+
+// ══════════════════════════════════════════
+// SSE — 实时推送
+// ══════════════════════════════════════════
+function initSSE(sessionId){
+  if(A.es){try{A.es.close();}catch{}}
+  const es=new EventSource(`/api/events?sessionId=${sessionId}&token=${encodeURIComponent(A.token)}`);
+  es.onmessage=e=>handleSSE(JSON.parse(e.data));
+  es.onerror=()=>{};// EventSource auto-reconnects
+  A.es=es;
+}
+
+function handleSSE(msg){
+  switch(msg.type){
+    case 'parent_joined':
+      document.getElementById('joined-msg').style.display='block';
+      document.getElementById('lobby-start').style.display='block';
+      toast('护道者已加入');
+      break;
+    case 'partner_submitted':
+      A.partnerDone=true;
+      document.getElementById('wstat').textContent='另一半已完成作答！';
+      if(A.submitted)setTimeout(doStage2,900);
+      break;
+    case 'both_submitted':
+      if(A.submitted)setTimeout(doStage2,900);
+      break;
+    case 'mark_update':
+      applyMark(msg.marker,msg.target,msg.qnum,msg.mtype);
+      refreshMarkVisuals();
+      break;
+    case 'resonance':
+      document.getElementById('res-banner').style.display='block';
+      toast('两心共鸣');
+      break;
+    case 'share_update':
+      if(msg.role!==A.user.role){
+        const ptxt=document.getElementById('partner-share-txt');
+        if(ptxt){
+          ptxt.textContent=msg.text||'等待对方输入…';
+          ptxt.classList.toggle('empty',!msg.text);
+          document.getElementById('partner-share-wrap').style.display='block';
+        }
+      }
+      break;
+    case 'partner_signed':
+      markSigned(msg.role);
+      break;
+    case 'complete':
+      show('s-done');
+      break;
+  }
+}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+let authMode='l',selRole=null;
+function switchTab(m){authMode=m;document.getElementById('tab-l').classList.toggle('on',m==='l');document.getElementById('tab-r').classList.toggle('on',m==='r');document.getElementById('reg-x').style.display=m==='r'?'block':'none';document.getElementById('a-btn').textContent=m==='l'?'踏入':'注册并踏入';document.getElementById('a-err').textContent='';}
+function pickRole(r){selRole=r;document.getElementById('ro-p').classList.toggle('on',r==='parent');document.getElementById('ro-c').classList.toggle('on',r==='child');}
+
+async function doAuth(){
+  const email=document.getElementById('a-em').value.trim(),pass=document.getElementById('a-pw').value,err=document.getElementById('a-err');
+  err.textContent='';
+  if(!email||!pass){err.textContent='请填写邮箱和密码';return;}
+  if(authMode==='r'&&!selRole){err.textContent='请选择身份';return;}
+  try{
+    const url=authMode==='l'?'/api/login':'/api/register';
+    const body=authMode==='l'?{email,password:pass}:{email,password:pass,role:selRole};
+    const res=await api('POST',url,body);
+    A.token=res.token;A.user={email:res.email,role:res.role};
+    localStorage.setItem('hx_t',res.token);localStorage.setItem('hx_u',JSON.stringify(A.user));
+    afterLogin();
+  }catch(e){err.textContent=e.message;}
+}
+
+async function afterLogin(){
+  const role=A.user.role;
+  document.getElementById('hrole').textContent=role==='parent'?'护道者':'求道者';
+  document.getElementById('hrole').className='hrole '+role;
+  try{
+    const{session}=await api('GET','/api/sessions/mine');
+    if(session){
+      A.session=session;
+      if(session.childId && session.parentId)initSSE(session.id);
+      await restoreState(session);
+    }else{showLobby();}
+  }catch{showLobby();}
+}
+
+async function restoreState(sess){
+  // 孩子创建后等待家长加入 or 家长还未加入
+  if(!sess.parentId || !sess.childId){showLobby();return;}
+  // 检查是否已完成（双方都签约）
+  try{
+    const{contract}=await api('GET',`/api/contracts/${sess.id}`);
+    if(contract&&contract.parentSigned&&contract.childSigned){goComplete();return;}
+  }catch{}
+  try{
+    const{answers}=await api('GET',`/api/answers/${sess.id}`);
+    A.ans.parent=answers.find(a=>a.role==='parent')||null;
+    A.ans.child=answers.find(a=>a.role==='child')||null;
+    const myAns=A.ans[A.user.role],partnerAns=A.ans[A.user.role==='parent'?'child':'parent'];
+    if(myAns&&partnerAns){await doStage2();return;}
+    if(myAns)A.submitted=true;
+    if(partnerAns)A.partnerDone=true;
+    goCut();
+  }catch{goCut();}
+}
+
+function logout(){
+  A.token=null;A.user=null;A.session=null;
+  localStorage.removeItem('hx_t');localStorage.removeItem('hx_u');
+  if(A.es)try{A.es.close();}catch{}
+  show('s-auth');
+}
+
+// ══════════════════════════════════════════
+// LOBBY
+// ══════════════════════════════════════════
+async function showLobby(){
+  const role=A.user.role;
+  // 求道者（孩子）持有邀请码；护道者（家长）输入邀请码
+  document.getElementById('lbtitle').textContent=role==='child'?'等待护道者加入':'踏入求道者的识海关';
+  document.getElementById('lb-c').style.display=role==='child'?'block':'none';
+  document.getElementById('lb-p').style.display=role==='parent'?'block':'none';
+  show('s-lobby');
+  if(role==='child'){
+    try{
+      const{session}=await api('POST','/api/sessions/create');
+      A.session=session;
+      document.getElementById('code-txt').textContent=session.code;
+      initSSE(session.id);
+      if(session.parentId){document.getElementById('joined-msg').style.display='block';document.getElementById('lobby-start').style.display='block';}
+    }catch(e){toast(e.message,'er');}
+  }
+}
+
+async function newSess(){
+  if(A.es)try{A.es.close();}catch{}
+  try{
+    const{session}=await api('POST','/api/sessions/new');
+    A.session=session;
+    document.getElementById('code-txt').textContent=session.code;
+    document.getElementById('joined-msg').style.display='none';
+    document.getElementById('lobby-start').style.display='none';
+    initSSE(session.id);toast('邀请码已更新');
+  }catch(e){toast(e.message,'er');}
+}
+
+async function joinSess(){
+  const code=document.getElementById('code-in').value.trim(),err=document.getElementById('ce-err');
+  err.textContent='';
+  if(!code||code.length<4){err.textContent='请输入有效邀请码';return;}
+  try{
+    const{session}=await api('POST','/api/sessions/join',{code});
+    A.session=session;initSSE(session.id);goCut();
+  }catch(e){err.textContent=e.message;}
+}
+
+// ══════════════════════════════════════════
+// CUTSCENE
+// ══════════════════════════════════════════
+function goCut(){A.cutIdx=0;show('s-cut');showLine(0);}
+function showLine(i){
+  const d=LINES[i];A.cutIdx=i;
+  const btn=document.getElementById('cbtn');
+  btn.disabled=true;
+  typewrite(document.getElementById('ctxt'),d.t,28,()=>btn.disabled=false);
+  document.getElementById('chint').textContent=d.h||'';
+  btn.textContent=i<LINES.length-1?'继续':'开始试炼';
+}
+function nextLine(){
+  if(A.cutIdx<LINES.length-1)showLine(A.cutIdx+1);
+  else startGame();
+}
+function startGame(){
+  const role=A.user.role;
+  document.getElementById('fp').style.display=role==='parent'?'flex':'none';
+  document.getElementById('fc').style.display=role==='child'?'flex':'none';
+  document.getElementById('s1npc').textContent=role==='parent'
+    ?'结界已布，求道者界面不可见。此非考校，乃绘心。请如实填写三则天问。'
+    :'结界已布，护道者界面不可见。此非考校，乃绘心。请如实作答三则自省。';
+  show('s-game');goPanel(1);
+  if(A.submitted)showWov();
+}
+
+// ══════════════════════════════════════════
+// STAGE 1
+// ══════════════════════════════════════════
+function toggleOath(){
+  A.oath=!A.oath;
+  const role=A.user.role;
+  document.getElementById('oa-'+( role==='parent'?'p':'c')).classList.toggle('on',A.oath);
+}
+
+async function submitAns(){
+  const r=A.user.role,isP=r==='parent';
+  const q1=document.getElementById(isP?'pq1':'cq1').value.trim();
+  const q2=document.getElementById(isP?'pq2':'cq2').value.trim();
+  const q3=document.getElementById(isP?'pq3':'cq3').value.trim();
+  if(!q1&&!q2&&!q3){toast('请至少作答一题','er');return;}
+  try{
+    await api('POST','/api/answers',{sessionId:A.session.id,q1,q2,q3});
+    A.submitted=true;A.ans[r]={role:r,q1,q2,q3};
+    showWov();
+    if(A.partnerDone)setTimeout(doStage2,1000);
+  }catch(e){toast(e.message,'er');}
+}
+
+function showWov(){
+  const ov=document.getElementById('wov');ov.classList.add('show');
+  if(A.partnerDone)document.getElementById('wstat').textContent='另一半已完成，准备交换灵图...';
+}
+
+async function doStage2(){
+  document.getElementById('wov').classList.remove('show');
+  try{const{answers}=await api('GET',`/api/answers/${A.session.id}`);A.ans.parent=answers.find(a=>a.role==='parent')||null;A.ans.child=answers.find(a=>a.role==='child')||null;}catch{}
+  try{const{marks}=await api('GET',`/api/marks/${A.session.id}`);A.marks=marks||[];}catch{A.marks=[];}
+  renderS2();goPanel(2);
+}
+
+// ══════════════════════════════════════════
+// STAGE 2
+// ══════════════════════════════════════════
+function renderS2(){
+  const my=A.user.role,pt=my==='parent'?'child':'parent';
+  const mAns=A.ans[my],pAns=A.ans[pt];
+  document.getElementById('s2lt').textContent=my==='parent'?'护道者灵图（我写的）':'求道者灵图（我写的）';
+  document.getElementById('s2rt').textContent=my==='parent'?'求道者灵图（另一半）':'护道者灵图（另一半）';
+
+  // Left: my answers, partner's marks visible
+  document.getElementById('s2lc').innerHTML=[1,2,3].map(i=>{
+    const ans=mAns?mAns['q'+i]:'';
+    const mk=A.marks.find(m=>m.marker===pt&&m.target===my&&m.qnum===i);
+    const cls=mk?(mk.mtype==='gold'?'mg':'mp'):'';
+    return `<div class="ac ${cls}" id="ml${i}">
+      <div class="aql">${QS[my][i-1].l}</div>
+      <div class="atxt ${ans?'':'e'}">${ans?esc(ans):'（未作答）'}</div>
+      ${mk?`<span class="mind ${mk.mtype==='gold'?'gold':'pur'}">${mk.mtype==='gold'?'光印标注':'雷纹标注'}</span>`:''}
+    </div>`;
+  }).join('');
+
+  // Right: partner's answers, my marks + buttons
+  document.getElementById('s2rc').innerHTML=[1,2,3].map(i=>{
+    const ans=pAns?pAns['q'+i]:'';
+    const mk=A.marks.find(m=>m.marker===my&&m.target===pt&&m.qnum===i);
+    const cls=mk?(mk.mtype==='gold'?'mg':'mp'):'';
+    const res=chkRes(i);
+    return `<div class="ac ${cls}" id="mr${i}">
+      <div class="aql">${QS[pt][i-1].l}</div>
+      <div class="atxt ${ans?'':'e'}">${ans?esc(ans):'（未作答）'}</div>
+      <div class="mrow">
+        <button class="mb g ${mk?.mtype==='gold'?'on':''}" onclick="setMark(${i},'gold')">光印</button>
+        <button class="mb p ${mk?.mtype==='purple'?'on':''}" onclick="setMark(${i},'purple')">雷纹</button>
+        ${mk?`<button class="mb" onclick="setMark(${i},null)" style="font-size:10px;color:var(--dim)">取消</button>`:''}
+      </div>
+      ${res?'<div class="resbox" style="display:block">两心共鸣</div>':''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('res-banner').style.display=[1,2,3].some(i=>chkRes(i))?'block':'none';
+}
+
+function chkRes(q){
+  const my=A.user.role,pt=my==='parent'?'child':'parent';
+  return !!(A.marks.find(m=>m.marker===my&&m.target===pt&&m.qnum===q&&m.mtype==='gold')&&A.marks.find(m=>m.marker===pt&&m.target===my&&m.qnum===q&&m.mtype==='gold'));
+}
+
+function applyMark(mk,tg,q,mt){
+  const i=A.marks.findIndex(m=>m.marker===mk&&m.target===tg&&m.qnum===q);
+  if(mt){if(i>=0)A.marks[i].mtype=mt;else A.marks.push({marker:mk,target:tg,qnum:q,mtype:mt});}
+  else{if(i>=0)A.marks.splice(i,1);}
+}
+
+function refreshMarkVisuals(){
+  const my=A.user.role,pt=my==='parent'?'child':'parent';
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('ml'+i);if(!el)return;
+    const mk=A.marks.find(m=>m.marker===pt&&m.target===my&&m.qnum===i);
+    el.className='ac '+(mk?(mk.mtype==='gold'?'mg':'mp'):'');
+    let ind=el.querySelector('.mind');
+    if(mk&&!ind){ind=document.createElement('span');ind.className='mind '+(mk.mtype==='gold'?'gold':'pur');ind.textContent=mk.mtype==='gold'?'光印标注':'雷纹标注';el.appendChild(ind);}
+    else if(!mk&&ind)ind.remove();
+  });
+  document.getElementById('res-banner').style.display=[1,2,3].some(i=>chkRes(i))?'block':'none';
+}
+
+async function setMark(q,mt){
+  const my=A.user.role,pt=my==='parent'?'child':'parent';
+  applyMark(my,pt,q,mt);renderS2();
+  try{await api('POST','/api/marks',{sessionId:A.session.id,target:pt,qnum:q,mtype:mt});}catch(e){toast(e.message,'er');}
+}
+
+// ══════════════════════════════════════════
+// STAGE 3
+// ══════════════════════════════════════════
+let shTimer=null;
+function onShare(role){
+  if(role!==A.user.role)return;
+  clearTimeout(shTimer);
+  shTimer=setTimeout(async()=>{
+    const t=document.getElementById('sh-'+role[0]).value;
+    try{await api('POST','/api/shares',{sessionId:A.session.id,text:t});}catch{}
+  },700);
+}
+
+async function loadShares(){
+  try{
+    const{share}=await api('GET',`/api/shares/${A.session.id}`);
+    const r=A.user.role,pr=r==='parent'?'child':'parent';
+    const mf=r==='parent'?'parentText':'childText';
+    const pf=pr==='parent'?'parentText':'childText';
+    if(share){
+      const myEl=document.getElementById('sh-'+r[0]);
+      if(myEl&&share[mf])myEl.value=share[mf];
+      const ptxt=document.getElementById('partner-share-txt');
+      if(ptxt&&share[pf]){
+        ptxt.textContent=share[pf];
+        ptxt.classList.remove('empty');
+        document.getElementById('partner-share-wrap').style.display='block';
+      }
+    }
+  }catch{}
+}
+
+// ══════════════════════════════════════════
+// STAGE 4
+// ══════════════════════════════════════════
+function markSigned(role){
+  const s=document.getElementById('ss-'+role[0]);
+  if(s)s.classList.add('done');
+  const t=document.getElementById('st-'+role[0]);
+  if(t)t.textContent=new Date().toLocaleTimeString('zh-CN');
+}
+
+async function signIt(role){
+  if(role!==A.user.role)return;
+  const s=document.getElementById('ss-'+role[0]);
+  if(s.classList.contains('done'))return;
+  try{await api('POST','/api/contracts/sign',{sessionId:A.session.id});markSigned(role);toast('签押已立');}
+  catch(e){toast(e.message,'er');}
+}
+
+async function loadContract(){
+  try{
+    const{contract}=await api('GET',`/api/contracts/${A.session.id}`);
+    if(!contract)return;
+    if(contract.parentSigned)markSigned('parent');
+    if(contract.childSigned)markSigned('child');
+  }catch{}
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goPanel(n){
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('show',i+1===n));
+  for(let i=1;i<=4;i++){const p=document.getElementById('p'+i);p.classList.toggle('done',i<n);p.classList.toggle('now',i===n);}
+  document.getElementById('s-game').scrollTo(0,0);
+  if(n===3){
+    const r=A.user.role;
+    document.getElementById('sh-mine-p').style.display=r==='parent'?'block':'none';
+    document.getElementById('sh-mine-c').style.display=r==='child'?'block':'none';
+    loadShares();
+  }
+  if(n===4)loadContract();
+}
+
+function goComplete(){show('s-done');}
+
+async function newGame(){
+  // 重置状态，返回大厅开新局
+  if(A.es)try{A.es.close();}catch{}
+  A.session=null;A.submitted=false;A.partnerDone=false;
+  A.ans={parent:null,child:null};A.marks=[];A.oath=false;A.es=null;
+  showLobby();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+async function init(){
+  const t=localStorage.getItem('hx_t'),u=localStorage.getItem('hx_u');
+  if(t&&u){
+    A.token=t;A.user=JSON.parse(u);
+    document.getElementById('hrole').textContent=A.user.role==='parent'?'护道者':'求道者';
+    document.getElementById('hrole').className='hrole '+A.user.role;
+    try{await afterLogin();return;}catch{}
+  }
+  show('s-auth');
+}
+init();
+</script>
+</body>
+</html>
