@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>焕墟幻境 · 第一课「破壁」</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #080810;
+    --bg2: #0d0d1a;
+    --bg3: #12121f;
+    --red: #c9626a;
+    --red-light: #e8959b;
+    --cyan: #00ffd1;
+    --cyan-dim: #00c9a7;
+    --gold: #f0c060;
+    --gold-dim: #c99a40;
+    --purple: #9b72e8;
+    --purple-dim: #7450c0;
+    --text: #ddd8cc;
+    --text-dim: #8a8878;
+    --border: rgba(255,255,255,0.08);
+    --glow-cyan: 0 0 20px rgba(0,255,209,0.4);
+    --glow-gold: 0 0 20px rgba(240,192,96,0.4);
+    --glow-red: 0 0 20px rgba(201,98,106,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== CANVAS BG ===== */
+  #canvas-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 10;
+    transition: opacity 0.8s ease;
+  }
+  .screen.hidden { opacity: 0; pointer-events: none; }
+  .screen.gone { display: none; }
+
+  /* ===== LANDING ===== */
+  #screen-landing {
+    background: radial-gradient(ellipse at 50% 40%, #1a0a1f 0%, #08080f 60%);
+    text-align: center;
+  }
+
+  .landing-badge {
+    font-size: 11px; letter-spacing: 4px; color: var(--cyan);
+    text-transform: uppercase; margin-bottom: 20px;
+    opacity: 0.7;
+  }
+
+  .landing-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 700;
+    background: linear-gradient(135deg, #f0c060 0%, #e8959b 40%, #00ffd1 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 30px rgba(240,192,96,0.3));
+  }
+
+  .landing-subtitle {
+    font-size: clamp(16px, 2.5vw, 22px);
+    color: var(--text-dim); letter-spacing: 6px;
+    margin-bottom: 10px;
+  }
+
+  .landing-lesson {
+    font-size: 13px; color: var(--red-light);
+    letter-spacing: 3px; margin-bottom: 50px;
+  }
+
+  .landing-desc {
+    max-width: 500px; margin: 0 auto 50px;
+    color: var(--text-dim); font-size: 14px;
+    line-height: 1.9; padding: 0 20px;
+  }
+
+  .btn-start {
+    position: relative;
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    padding: 16px 52px;
+    font-size: 16px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    overflow: hidden;
+  }
+  .btn-start::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--cyan); opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-start:hover { box-shadow: var(--glow-cyan); color: var(--bg); }
+  .btn-start:hover::before { opacity: 1; }
+  .btn-start span { position: relative; z-index: 1; }
+
+  .landing-ornament {
+    position: absolute;
+    font-family: 'Noto Serif SC', serif;
+    color: rgba(240,192,96,0.08);
+    font-size: 200px;
+    font-weight: 700;
+    user-select: none;
+    pointer-events: none;
+  }
+  .landing-ornament.top { top: -40px; left: -20px; }
+  .landing-ornament.bottom { bottom: -60px; right: -10px; }
+
+  .scroll-hint {
+    position: absolute; bottom: 30px;
+    font-size: 11px; color: var(--text-dim);
+    letter-spacing: 3px; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+  /* ===== CUTSCENE ===== */
+  #screen-cutscene {
+    background: #050508;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 60px;
+  }
+
+  .scene-art {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(155,114,232,0.15) 0%, transparent 60%);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .scene-char {
+    width: 220px; height: 320px;
+    position: relative;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .char-svg { width: 100%; height: 100%; }
+
+  .npc-dialogue {
+    position: relative; z-index: 5;
+    width: min(700px, 90vw);
+    margin: 0 auto;
+    background: rgba(13,13,26,0.95);
+    border: 1px solid rgba(155,114,232,0.3);
+    backdrop-filter: blur(10px);
+    padding: 28px 32px;
+  }
+  .npc-dialogue::before {
+    content: '';
+    position: absolute; top: -1px; left: 20px; right: 20px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple), transparent);
+  }
+
+  .npc-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 13px; color: var(--purple);
+    letter-spacing: 4px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .npc-name::after { content: ''; flex: 1; height: 1px; background: rgba(155,114,232,0.2); }
+
+  .npc-text {
+    font-size: 15px; line-height: 2;
+    color: var(--text); min-height: 60px;
+  }
+
+  .npc-hint { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+
+  .npc-translate {
+    margin-top: 14px; padding: 12px 16px;
+    background: rgba(0,255,209,0.04);
+    border-left: 2px solid var(--cyan);
+    font-size: 13px; color: rgba(0,255,209,0.8);
+    line-height: 1.8; display: none;
+  }
+
+  .btn-next {
+    margin-top: 20px; align-self: flex-end;
+    background: transparent; border: 1px solid var(--purple);
+    color: var(--purple); padding: 10px 30px;
+    font-size: 13px; letter-spacing: 3px; cursor: pointer;
+    font-family: inherit; transition: all 0.3s; float: right;
+  }
+  .btn-next:hover { background: var(--purple); color: var(--bg); }
+
+  /* ===== MAIN GAME ===== */
+  #screen-game {
+    background: var(--bg);
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    align-items: stretch;
+    z-index: 5;
+  }
+
+  /* Top HUD */
+  .hud {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(8,8,16,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    padding: 14px 30px;
+    display: flex; align-items: center; gap: 20px;
+  }
+
+  .hud-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px; color: var(--gold);
+    letter-spacing: 3px; flex-shrink: 0;
+  }
+
+  .stage-bar {
+    flex: 1; display: flex; gap: 4px; align-items: center;
+  }
+
+  .stage-node {
+    flex: 1; height: 3px; background: rgba(255,255,255,0.08);
+    border-radius: 2px; transition: background 0.5s;
+    position: relative;
+  }
+  .stage-node.active { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+  .stage-node.done { background: var(--gold); }
+  .stage-node-label {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--text-dim); white-space: nowrap; letter-spacing: 1px;
+  }
+
+  .hud-right {
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+  }
+
+  .hud-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+  .hud-avatar.parent { background: rgba(240,192,96,0.15); border: 1px solid var(--gold); color: var(--gold); }
+  .hud-avatar.child { background: rgba(0,255,209,0.1); border: 1px solid var(--cyan); color: var(--cyan); }
+
+  /* ===== STAGE PANELS ===== */
+  .stage-panel {
+    display: none; flex-direction: column;
+    min-height: calc(100vh - 65px);
+    padding: 40px 30px;
+    max-width: 1100px; margin: 0 auto;
+    width: 100%;
+  }
+  .stage-panel.active { display: flex; }
+
+  .stage-header {
+    text-align: center; margin-bottom: 40px;
+  }
+  .stage-number {
+    font-size: 11px; color: var(--cyan); letter-spacing: 5px;
+    text-transform: uppercase; margin-bottom: 10px; opacity: 0.8;
+  }
+  .stage-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(24px, 4vw, 36px);
+    background: linear-gradient(135deg, var(--gold), var(--red-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 8px;
+  }
+  .stage-subtitle {
+    font-size: 13px; color: var(--text-dim); letter-spacing: 3px;
+  }
+
+  /* NPC inline hint */
+  .npc-inline {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: rgba(155,114,232,0.06);
+    border: 1px solid rgba(155,114,232,0.15);
+    padding: 20px 24px; margin-bottom: 30px;
+  }
+  .npc-inline-avatar {
+    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #6a3fa0, #9b72e8);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Noto Serif SC', serif; font-size: 18px; color: #fff;
+  }
+  .npc-inline-text { font-size: 14px; color: rgba(220,210,250,0.9); line-height: 1.8; }
+  .npc-inline-name { font-size: 11px; color: var(--purple); letter-spacing: 2px; margin-bottom: 6px; }
+
+  /* ROLE SWITCHER (Stage 1) */
+  .role-switcher {
+    display: flex; gap: 12px; justify-content: center; margin-bottom: 32px;
+  }
+  .role-btn {
+    padding: 12px 32px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim);
+    font-family: inherit; font-size: 14px; cursor: pointer;
+    transition: all 0.3s; letter-spacing: 2px;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .role-btn.parent.active { border-color: var(--gold); color: var(--gold); background: rgba(240,192,96,0.08); box-shadow: var(--glow-gold); }
+  .role-btn.child.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,255,209,0.06); box-shadow: var(--glow-cyan); }
+
+  /* SCROLL FORM */
+  .scroll-container {
+    display: none; flex-direction: column; gap: 24px;
+    animation: fadeIn 0.5s ease;
+  }
+  .scroll-container.active { display: flex; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  .scroll-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(20,18,10,0.9), rgba(12,10,20,0.9));
+    border: 1px solid rgba(240,192,96,0.15);
+    padding: 28px 32px;
+    overflow: hidden;
+  }
+  .scroll-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .scroll-card.cyan-theme { border-color: rgba(0,255,209,0.15); }
+  .scroll-card.cyan-theme::before {
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+
+  .scroll-q-num {
+    font-size: 11px; color: var(--gold); letter-spacing: 4px; margin-bottom: 8px;
+  }
+  .scroll-card.cyan-theme .scroll-q-num { color: var(--cyan); }
+
+  .scroll-q-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px; color: var(--text); margin-bottom: 6px; line-height: 1.6;
+  }
+
+  .translate-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-dim); cursor: pointer;
+    padding: 4px 12px; border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 16px; transition: all 0.2s; border-radius: 20px;
+  }
+  .translate-toggle:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .translate-box {
+    display: none; margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(0,255,209,0.04); border-left: 2px solid var(--cyan);
+    font-size: 13px; color: rgba(0,255,209,0.85); line-height: 1.9;
+  }
+
+  .scroll-input {
+    width: 100%; background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(240,192,96,0.3);
+    color: var(--text); font-family: 'Noto Serif SC', serif;
+    font-size: 15px; padding: 14px 16px; resize: none; outline: none;
+    line-height: 1.8; min-height: 90px;
+    transition: border-color 0.3s;
+  }
+  .scroll-input:focus { border-color: rgba(240,192,96,0.6); box-shadow: 0 4px 20px rgba(240,192,96,0.05); }
+  .cyan-theme .scroll-input { border-bottom-color: rgba(0,255,209,0.3); }
+  .cyan-theme .scroll-input:focus { border-color: rgba(0,255,209,0.5); }
+  .ink-effect { background-image: radial-gradient(circle at 50% 50%, rgba(240,192,96,0.03) 0%, transparent 70%); }
+
+  .oath-box {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 24px; background: rgba(240,192,96,0.04);
+    border: 1px solid rgba(240,192,96,0.15); cursor: pointer;
+    transition: all 0.3s; user-select: none;
+  }
+  .oath-box:hover { border-color: rgba(240,192,96,0.4); }
+  .oath-box.active { border-color: var(--gold); background: rgba(240,192,96,0.08); }
+  .oath-check {
+    width: 24px; height: 24px; border: 1px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 14px; transition: all 0.3s;
+  }
+  .oath-box.active .oath-check { background: var(--gold); }
+  .oath-text { font-size: 14px; color: var(--text-dim); }
+  .oath-translate { font-size: 12px; color: rgba(0,255,209,0.6); margin-top: 4px; }
+
+  /* ===== STAGE 2: DUAL MIRROR ===== */
+  .dual-grid {
+    display: grid; grid-template-columns: 1fr 60px 1fr;
+    gap: 0; align-items: start;
+  }
+
+  .mirror-panel {
+    padding: 24px;
+    background: rgba(13,12,20,0.8);
+    border: 1px solid var(--border);
+  }
+  .mirror-panel.parent { border-color: rgba(240,192,96,0.15); }
+  .mirror-panel.child { border-color: rgba(0,255,209,0.12); }
+
+  .mirror-title {
+    font-size: 11px; letter-spacing: 4px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px; opacity: 0.8;
+  }
+  .parent .mirror-title { color: var(--gold); }
+  .child .mirror-title { color: var(--cyan); }
+
+  .mirror-divider {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .mirror-divider::before {
+    content: '';
+    position: absolute; top: 0; bottom: 0; left: 50%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--purple) 30%, var(--purple) 70%, transparent);
+    opacity: 0.4;
+  }
+  .divider-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(155,114,232,0.1); border: 1px solid rgba(155,114,232,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; position: relative; z-index: 1;
+    animation: rotate 8s linear infinite;
+  }
+  @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  .answer-item {
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
+    position: relative; transition: border-color 0.3s;
+  }
+  .answer-item:hover { border-color: rgba(255,255,255,0.1); }
+
+  .answer-q { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 8px; }
+  .answer-text { font-size: 14px; color: var(--text); line-height: 1.7; min-height: 40px; }
+  .answer-text.empty { color: rgba(255,255,255,0.2); font-style: italic; font-size: 13px; }
+
+  .mark-row {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .mark-btn {
+    padding: 6px 14px; font-size: 12px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1); background: transparent;
+    color: var(--text-dim); font-family: inherit; transition: all 0.25s;
+    letter-spacing: 1px; border-radius: 2px;
+  }
+  .mark-btn.gold:hover, .mark-btn.gold.active {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(240,192,96,0.1); box-shadow: 0 0 10px rgba(240,192,96,0.2);
+  }
+  .mark-btn.purple:hover, .mark-btn.purple.active {
+    border-color: var(--purple); color: var(--purple);
+    background: rgba(155,114,232,0.1); box-shadow: 0 0 10px rgba(155,114,232,0.2);
+  }
+
+  .resonance-badge {
+    display: none; margin-top: 10px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, rgba(240,192,96,0.1), rgba(155,114,232,0.1));
+    border: 1px solid rgba(240,192,96,0.3);
+    font-size: 12px; color: var(--gold); letter-spacing: 2px;
+    animation: resonanceGlow 1.5s ease infinite;
+  }
+  @keyframes resonanceGlow {
+    0%,100%{box-shadow:0 0 10px rgba(240,192,96,0.2)}
+    50%{box-shadow:0 0 25px rgba(240,192,96,0.5)}
+  }
+
+  /* ===== STAGE 3 ===== */
+  .void-arena {
+    background: radial-gradient(ellipse at 50% 50%, rgba(155,114,232,0.08) 0%, transparent 70%);
+    border: 1px solid rgba(155,114,232,0.12);
+    padding: 40px; text-align: center; margin-bottom: 30px;
+    position: relative; overflow: hidden;
+    min-height: 180px; display: flex; align-items: center; justify-content: center;
+  }
+  .void-arena-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(14px, 2vw, 17px); color: rgba(220,215,255,0.85);
+    line-height: 2; max-width: 600px;
+  }
+
+  .share-card {
+    background: rgba(13,12,20,0.9); border: 1px solid var(--border);
+    padding: 24px 28px; margin-bottom: 20px;
+  }
+  .share-prompt {
+    font-size: 13px; color: var(--purple); letter-spacing: 2px; margin-bottom: 16px;
+  }
+  .share-input {
+    width: 100%; background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border); border-bottom: 1px solid rgba(155,114,232,0.3);
+    color: var(--text); font-family: 'Noto Serif SC', serif;
+    font-size: 14px; padding: 12px 14px; resize: none; outline: none;
+    line-height: 1.8; min-height: 80px; transition: border-color 0.3s;
+  }
+  .share-input:focus { border-color: rgba(155,114,232,0.5); }
+
+  .ai-followup {
+    display: none;
+    margin-top: 16px; padding: 14px 18px;
+    background: rgba(155,114,232,0.06); border-left: 2px solid var(--purple);
+    font-size: 13px; color: rgba(200,190,240,0.9); line-height: 1.8;
+    animation: fadeIn 0.5s ease;
+  }
+
+  /* ===== STAGE 4 ===== */
+  .kungfu-card {
+    background: rgba(12,10,20,0.9); border: 1px solid rgba(240,192,96,0.15);
+    padding: 28px 32px; margin-bottom: 20px; position: relative;
+  }
+  .kungfu-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .kungfu-title { font-family: 'Noto Serif SC', serif; font-size: 18px; color: var(--gold); margin-bottom: 20px; }
+  .kungfu-rule {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .kungfu-rule:last-of-type { border-bottom: none; }
+  .rule-icon { font-size: 20px; flex-shrink: 0; width: 32px; text-align: center; }
+  .rule-text { font-size: 14px; line-height: 1.8; color: var(--text); }
+  .rule-forbidden { color: var(--red-light); font-size: 13px; margin-top: 6px; }
+
+  .item-reward {
+    display: flex; gap: 20px; padding: 20px 24px;
+    background: rgba(240,192,96,0.04); border: 1px solid rgba(240,192,96,0.15);
+    margin-bottom: 16px;
+    cursor: default;
+    transition: all 0.3s;
+  }
+  .item-reward:hover { border-color: rgba(240,192,96,0.35); background: rgba(240,192,96,0.08); }
+  .item-icon { font-size: 32px; flex-shrink: 0; }
+  .item-name { font-family: 'Noto Serif SC', serif; font-size: 16px; color: var(--gold); margin-bottom: 6px; }
+  .item-desc { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+  .item-plain { font-size: 12px; color: rgba(0,255,209,0.7); margin-top: 6px; }
+
+  .contract-area {
+    padding: 28px; border: 1px solid rgba(240,192,96,0.2);
+    background: rgba(12,10,20,0.95); text-align: center; margin-bottom: 24px;
+  }
+  .contract-title { font-family: 'Noto Serif SC', serif; font-size: 20px; color: var(--gold); margin-bottom: 20px; }
+  .sign-area {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .sign-box {
+    border: 1px dashed rgba(255,255,255,0.15); padding: 20px;
+    min-height: 80px; cursor: pointer; transition: all 0.3s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px;
+  }
+  .sign-box:hover { border-color: var(--gold); }
+  .sign-box.signed { border-color: var(--gold); border-style: solid; background: rgba(240,192,96,0.05); }
+  .sign-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; }
+  .sign-mark { font-family: 'Noto Serif SC', serif; font-size: 28px; opacity: 0; transition: all 0.5s; }
+  .sign-box.signed .sign-mark { opacity: 1; color: var(--gold); }
+
+  /* ===== BUTTONS ===== */
+  .btn-action {
+    padding: 14px 40px; font-size: 14px;
+    letter-spacing: 3px; cursor: pointer;
+    font-family: inherit; transition: all 0.3s;
+    border: none; position: relative; overflow: hidden;
+  }
+  .btn-action.primary {
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: var(--bg);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .btn-action.primary:hover { box-shadow: var(--glow-gold); transform: translateY(-2px); }
+  .btn-action.secondary {
+    background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .btn-action.secondary:hover { background: rgba(0,255,209,0.08); box-shadow: var(--glow-cyan); }
+  .btn-action.ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+  .btn-action.ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  .btn-row { display: flex; gap: 14px; justify-content: flex-end; margin-top: 30px; }
+
+  /* ===== COMPLETION ===== */
+  #screen-complete {
+    background: radial-gradient(ellipse at 50% 40%, rgba(240,192,96,0.1) 0%, #05050a 60%);
+    text-align: center; padding: 40px;
+  }
+
+  .complete-icon {
+    font-size: 64px; margin-bottom: 20px;
+    animation: completePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes completePop {
+    0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1}
+  }
+
+  .complete-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    background: linear-gradient(135deg, var(--gold), var(--red-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 16px;
+  }
+
+  .complete-text { font-size: 15px; color: var(--text-dim); line-height: 1.9; margin-bottom: 40px; max-width: 500px; }
+
+  .rewards-grid {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .reward-chip {
+    padding: 10px 20px; border: 1px solid rgba(240,192,96,0.3);
+    background: rgba(240,192,96,0.06); font-size: 13px;
+    color: var(--gold); letter-spacing: 2px;
+    animation: fadeIn 0.5s ease forwards; opacity: 0;
+  }
+  .reward-chip:nth-child(1) { animation-delay: 0.3s; }
+  .reward-chip:nth-child(2) { animation-delay: 0.5s; }
+  .reward-chip:nth-child(3) { animation-delay: 0.7s; }
+
+  .teaser-box {
+    max-width: 500px; margin: 0 auto 40px;
+    padding: 20px 28px; border: 1px solid rgba(155,114,232,0.2);
+    background: rgba(155,114,232,0.05);
+    font-size: 14px; color: rgba(200,190,240,0.8); line-height: 1.8;
+    font-family: 'Noto Serif SC', serif;
+  }
+
+  /* ===== GLITCH FX ===== */
+  .glitch {
+    position: relative;
+  }
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute; left: 2px; top: 0;
+    color: var(--cyan);
+    clip-path: rect(0, 0, 0, 0);
+    animation: glitch-anim 4s infinite linear;
+    opacity: 0.7;
+  }
+  @keyframes glitch-anim {
+    0%,90%,100%{clip-path:rect(0,0,0,0)}
+    91%{clip-path:rect(10px,9999px,20px,0);transform:translate(-2px)}
+    93%{clip-path:rect(40px,9999px,55px,0);transform:translate(2px)}
+    95%{clip-path:rect(5px,9999px,15px,0);transform:translate(-2px)}
+    97%{clip-path:rect(60px,9999px,75px,0);transform:translate(1px)}
+  }
+
+  /* ===== CRACK FX ===== */
+  .crack-overlay {
+    position: fixed; inset: 0; pointer-events: none; z-index: 200;
+    opacity: 0; transition: opacity 0.5s;
+  }
+  .crack-overlay.show { opacity: 1; }
+  .crack-overlay svg { width: 100%; height: 100%; }
+
+  /* ===== MISC ===== */
+  .divider-fancy {
+    display: flex; align-items: center; gap: 16px; margin: 30px 0;
+    color: var(--text-dim); font-size: 11px; letter-spacing: 4px;
+  }
+  .divider-fancy::before, .divider-fancy::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  }
+
+  .progress-text {
+    font-size: 12px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .progress-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--cyan);
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .dual-grid { grid-template-columns: 1fr; }
+    .mirror-divider { display: none; }
+    .sign-area { grid-template-columns: 1fr; }
+    .stage-panel { padding: 24px 16px; }
+    .hud { padding: 12px 16px; }
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(240,192,96,0.2); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(240,192,96,0.4); }
+
+  /* selector tabs */
+  .mode-bar {
+    display: flex; background: rgba(0,0,0,0.3); padding: 4px;
+    border: 1px solid var(--border); margin-bottom: 24px;
+    border-radius: 2px;
+  }
+  .mode-tab {
+    flex: 1; padding: 10px; text-align: center; cursor: pointer;
+    font-size: 13px; letter-spacing: 2px; color: var(--text-dim);
+    transition: all 0.3s; border-radius: 1px;
+  }
+  .mode-tab.active { background: rgba(240,192,96,0.1); color: var(--gold); }
+
+  /* tooltip */
+  .tip {
+    display: inline-block; position: relative; cursor: help;
+    border-bottom: 1px dashed rgba(0,255,209,0.4); color: var(--cyan);
+  }
+  .tip::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: rgba(13,13,26,0.98); border: 1px solid rgba(0,255,209,0.3);
+    padding: 8px 12px; font-size: 12px; white-space: nowrap;
+    color: var(--text); pointer-events: none; opacity: 0;
+    transition: opacity 0.2s; z-index: 100; max-width: 200px; white-space: normal;
+    text-align: left;
+  }
+  .tip:hover::after { opacity: 1; }
+</style>
+</head>
+<body>
+
+<canvas id="canvas-bg"></canvas>
+
+<!-- ===========================
+     SCREEN 1: LANDING
+=========================== -->
+<div id="screen-landing" class="screen">
+  <span class="landing-ornament top">壁</span>
+  <span class="landing-ornament bottom">识</span>
+
+  <div class="landing-badge">焕墟幻境 · Season 01</div>
+
+  <h1 class="landing-title glitch" data-text="第一课「破壁」">第一课「破壁」</h1>
+  <div class="landing-subtitle">双生幻境入口</div>
+  <div class="landing-lesson">识海关 · 亲子共历</div>
+
+  <p class="landing-desc">
+    玩家队伍（家长+孩子）被传送至<span class="tip" data-tip="现实与内心的交界处">识海关</span>。<br>
+    护道者手持「外境图」，求道者内藏「心域图」。<br>
+    唯有两图交叠，裂隙才会成为光之通道……
+  </p>
+
+  <button class="btn-start" onclick="startGame()"><span>踏入识海关</span></button>
+
+  <div class="scroll-hint">▼ 建议双人同游</div>
+</div>
+
+<!-- ===========================
+     SCREEN 2: CUTSCENE
+=========================== -->
+<div id="screen-cutscene" class="screen hidden gone">
+  <div class="scene-art">
+    <!-- SVG character: Zhuyinzi -->
+    <div class="scene-char">
+      <svg class="char-svg" viewBox="0 0 220 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- body glow -->
+        <ellipse cx="110" cy="280" rx="55" ry="15" fill="rgba(155,114,232,0.15)"/>
+        <!-- robe -->
+        <path d="M70 140 Q60 200 55 280 Q90 300 110 300 Q130 300 165 280 Q160 200 150 140Z" fill="#1a0a2e" stroke="rgba(155,114,232,0.4)" stroke-width="1"/>
+        <!-- robe details -->
+        <path d="M90 160 L88 240" stroke="rgba(240,192,96,0.3)" stroke-width="1" stroke-dasharray="4 4"/>
+        <path d="M130 160 L132 240" stroke="rgba(240,192,96,0.3)" stroke-width="1" stroke-dasharray="4 4"/>
+        <!-- collar highlight -->
+        <path d="M95 145 Q110 155 125 145" stroke="rgba(240,192,96,0.5)" stroke-width="1.5" fill="none"/>
+        <!-- arms -->
+        <path d="M70 155 Q40 175 35 200 Q45 205 50 200 Q60 180 75 170Z" fill="#1a0a2e" stroke="rgba(155,114,232,0.4)" stroke-width="1"/>
+        <path d="M150 155 Q180 175 185 200 Q175 205 170 200 Q160 180 145 170Z" fill="#1a0a2e" stroke="rgba(155,114,232,0.4)" stroke-width="1"/>
+        <!-- scroll in hand -->
+        <rect x="28" y="195" width="22" height="14" rx="3" fill="rgba(240,192,96,0.15)" stroke="rgba(240,192,96,0.5)" stroke-width="1"/>
+        <line x1="28" y1="202" x2="50" y2="202" stroke="rgba(240,192,96,0.5)" stroke-width="0.5"/>
+        <!-- glow on scroll -->
+        <ellipse cx="39" cy="202" rx="12" ry="7" fill="rgba(240,192,96,0.1)"/>
+        <!-- neck -->
+        <rect x="104" y="115" width="12" height="28" rx="4" fill="#d4b0a0"/>
+        <!-- head -->
+        <ellipse cx="110" cy="100" rx="30" ry="35" fill="#d4b0a0"/>
+        <!-- hair -->
+        <path d="M80 85 Q80 50 110 48 Q140 50 140 85" fill="#c8daf5"/>
+        <path d="M80 90 Q70 80 72 65 Q76 55 82 56" fill="#c8daf5"/>
+        <path d="M140 90 Q150 80 148 65 Q144 55 138 56" fill="#c8daf5"/>
+        <!-- hair strand -->
+        <path d="M110 48 Q105 30 108 20" stroke="#c8daf5" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="108" cy="18" r="3" fill="rgba(240,192,96,0.8)"/>
+        <!-- eyepatch frame -->
+        <ellipse cx="120" cy="92" rx="10" ry="7" fill="none" stroke="rgba(240,192,96,0.7)" stroke-width="1.5"/>
+        <ellipse cx="120" cy="92" rx="7" ry="5" fill="rgba(240,192,96,0.1)"/>
+        <line x1="130" y1="91" x2="137" y2="90" stroke="rgba(240,192,96,0.7)" stroke-width="1"/>
+        <!-- eyes -->
+        <ellipse cx="98" cy="92" rx="5" ry="5.5" fill="white"/>
+        <ellipse cx="98" cy="93" rx="3" ry="3.5" fill="#4a2080"/>
+        <circle cx="99" cy="91" r="1" fill="white"/>
+        <!-- eyebrows -->
+        <path d="M92 86 Q98 83 104 86" stroke="#6a4a30" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M114 85 Q120 82 126 84" stroke="#6a4a30" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- mouth -->
+        <path d="M104 108 Q110 113 116 108" stroke="#a06050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- earrings -->
+        <circle cx="80" cy="100" r="3" fill="none" stroke="rgba(240,192,96,0.6)" stroke-width="1"/>
+        <circle cx="80" cy="107" r="2" fill="rgba(240,192,96,0.4)"/>
+        <!-- glowing particles -->
+        <circle cx="160" cy="130" r="2" fill="rgba(0,255,209,0.7)" opacity="0.8">
+          <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="130;120;130" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="55" cy="150" r="1.5" fill="rgba(155,114,232,0.8)" opacity="0.6">
+          <animate attributeName="opacity" values="0;1;0" dur="2.5s" begin="1s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="150;140;150" dur="3.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="170" cy="170" r="2" fill="rgba(240,192,96,0.7)">
+          <animate attributeName="opacity" values="0;0.8;0" dur="1.8s" begin="0.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+
+  <div class="npc-dialogue" id="npc-dialogue">
+    <div class="npc-name">⊙ 烛阴子 · 守境人</div>
+    <div class="npc-text" id="npc-text"></div>
+    <div class="npc-hint" id="npc-hint"></div>
+    <div class="npc-translate" id="npc-translate"></div>
+    <div style="overflow:hidden; margin-top:16px;">
+      <button class="btn-next" id="btn-cutscene-next" onclick="nextDialogue()">继续 ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===========================
+     SCREEN 3: GAME
+=========================== -->
+<div id="screen-game" class="screen hidden gone">
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-title">焕墟幻境</div>
+    <div class="stage-bar">
+      <div class="stage-node" id="node-1">
+        <div class="stage-node-label">分神化境</div>
+      </div>
+      <div class="stage-node" id="node-2">
+        <div class="stage-node-label">双镜交辉</div>
+      </div>
+      <div class="stage-node" id="node-3">
+        <div class="stage-node-label">真言法会</div>
+      </div>
+      <div class="stage-node" id="node-4">
+        <div class="stage-node-label">持光者契约</div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-avatar parent">护</div>
+      <div class="hud-avatar child">求</div>
+    </div>
+  </div>
+
+  <!-- ========== STAGE 1 ========== -->
+  <div class="stage-panel active" id="stage-1">
+    <div class="stage-header">
+      <div class="stage-number">第一关 · STAGE 01</div>
+      <div class="stage-title">分神化境</div>
+      <div class="stage-subtitle">异步神识铭刻 · 各自填写玉简</div>
+    </div>
+
+    <div class="npc-inline">
+      <div class="npc-inline-avatar">烛</div>
+      <div>
+        <div class="npc-inline-name">烛阴子</div>
+        <div class="npc-inline-text">
+          "结界已布。<strong style="color:var(--purple)">护道者</strong>与<strong style="color:var(--cyan)">求道者</strong>分居两端，对方界面不可见。<br>
+          切记：此非考校，乃<span class="tip" data-tip="描绘你们内心真实的地图">绘心</span>。道心惟微，允许犹豫。"
+          <div style="margin-top:8px;font-size:12px;color:rgba(0,255,209,0.6)">
+            💡 白话：两人各自作答，不能看对方写什么。说真话，没有对错。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role-switcher">
+      <button class="role-btn parent active" id="rbtn-parent" onclick="switchRole('parent')">
+        ⚡ 护道者（家长）
+      </button>
+      <button class="role-btn child" id="rbtn-child" onclick="switchRole('child')">
+        ✦ 求道者（孩子）
+      </button>
+    </div>
+
+    <!-- PARENT FORM -->
+    <div class="scroll-container active" id="form-parent">
+      <div style="text-align:center;margin-bottom:6px;">
+        <span style="font-size:12px;color:var(--gold);letter-spacing:3px">护道者卷 · 天问三则</span>
+      </div>
+
+      <div class="scroll-card">
+        <div class="scroll-q-num">Q 01 · 微光侦测</div>
+        <div class="scroll-q-text">寻灵光：近日何时，见求道者道心最明？</div>
+        <div class="translate-toggle" onclick="toggleTrans(this)">💡 烛老师说人话</div>
+        <div class="translate-box">🐉 "最近一周，孩子在哪个瞬间最开心、最专注？"<br>
+          👉 提示：可能是打游戏时、画画时、和朋友聊天时……描述具体场景</div>
+        <textarea class="scroll-input ink-effect" id="p_q1" placeholder="在此处落笔……" rows="3"></textarea>
+      </div>
+
+      <div class="scroll-card">
+        <div class="scroll-q-num">Q 02 · 压力地貌</div>
+        <div class="scroll-q-text">观心劫：汝见其识海中有何郁结之气？</div>
+        <div class="translate-toggle" onclick="toggleTrans(this)">💡 烛老师说人话</div>
+        <div class="translate-box">🐉 "你觉得孩子最近有什么烦恼或压力？"<br>
+          👉 提示：学业压力？人际关系？自我怀疑？不用跟孩子确认，先写下你的观察</div>
+        <textarea class="scroll-input ink-effect" id="p_q2" placeholder="在此处落笔……" rows="3"></textarea>
+      </div>
+
+      <div class="scroll-card">
+        <div class="scroll-q-num">Q 03 · 未标之地</div>
+        <div class="scroll-q-text">探秘境：其心中可有汝未至之境？</div>
+        <div class="translate-toggle" onclick="toggleTrans(this)">💡 烛老师说人话</div>
+        <div class="translate-box">🐉 "孩子心里有没有啥是你不知道的？"<br>
+          👉 提示：偷偷追的星、混的圈子、暗恋的人……</div>
+        <textarea class="scroll-input ink-effect" id="p_q3" placeholder="在此处落笔……" rows="3"></textarea>
+      </div>
+
+      <div class="oath-box" id="oath-parent" onclick="toggleOath('parent')">
+        <div class="oath-check" id="ocheck-parent">✓</div>
+        <div>
+          <div class="oath-text">以道心为誓，所言皆真</div>
+          <div class="oath-translate">💡 白话：我保证我说的是真话（拉钩上吊那种）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHILD FORM -->
+    <div class="scroll-container" id="form-child">
+      <div style="text-align:center;margin-bottom:6px;">
+        <span style="font-size:12px;color:var(--cyan);letter-spacing:3px">求道者卷 · 自省三则</span>
+      </div>
+
+      <div class="scroll-card cyan-theme">
+        <div class="scroll-q-num">Q 01 · 微光自察</div>
+        <div class="scroll-q-text">问本心：近日何时，尔最感通明自在？</div>
+        <div class="translate-toggle" onclick="toggleTrans(this)">💡 烛老师说人话</div>
+        <div class="translate-box">🐉 "最近啥时候你最爽、最开心、最像你自己？"<br>
+          👉 提示：打游戏通关？和朋友八卦？一个人听歌？随便说！</div>
+        <textarea class="scroll-input ink-effect" id="c_q1" placeholder="在此处落笔……" rows="3"></textarea>
+      </div>
+
+      <div class="scroll-card cyan-theme">
+        <div class="scroll-q-num">Q 02 · 压力自陈</div>
+        <div class="scroll-q-text">诉心障：今有何事，如劫雷盘绕？</div>
+        <div class="translate-toggle" onclick="toggleTrans(this)">💡 烛老师说人话</div>
+        <div class="translate-box">🐉 "最近有啥事让你特别烦、压力大？"<br>
+          👉 提示：作业太多？爸妈管太严？考试没考好？放心说！</div>
+        <textarea class="scroll-input ink-effect" id="c_q2" placeholder="在此处落笔……" rows="3"></textarea>
+      </div>
+
+      <div class="scroll-card cyan-theme">
+        <div class="scroll-q-num">Q 03 · 秘境自观</div>
+        <div class="scroll-q-text">藏幽处：可有洞天，未示于至亲？</div>
+        <div class="translate-toggle" onclick="toggleTrans(this)">💡 烛老师说人话</div>
+        <div class="translate-box">🐉 "你心里有没有啥小秘密，不太跟爸妈说的？"<br>
+          👉 提示：暗恋的人？偷偷攒的零花钱？不想让他们知道的爱好？<br>
+          <strong style="color:var(--cyan)">放心，他们现在看不到你的屏幕</strong></div>
+        <textarea class="scroll-input ink-effect" id="c_q3" placeholder="在此处落笔……" rows="3"></textarea>
+      </div>
+
+      <div class="oath-box" id="oath-child" onclick="toggleOath('child')">
+        <div class="oath-check" id="ocheck-child">✓</div>
+        <div>
+          <div class="oath-text">以道心为誓，所言皆真</div>
+          <div class="oath-translate">💡 白话：我保证我说的是真话</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <div class="progress-text">
+        <div class="progress-dot"></div>
+        双方完成后继续
+      </div>
+      <button class="btn-action secondary" onclick="goStage(2)">灵图已成，交换 →</button>
+    </div>
+  </div>
+
+  <!-- ========== STAGE 2 ========== -->
+  <div class="stage-panel" id="stage-2">
+    <div class="stage-header">
+      <div class="stage-number">第二关 · STAGE 02</div>
+      <div class="stage-title">双镜交辉</div>
+      <div class="stage-subtitle">灵光交映 · 标注认同与好奇</div>
+    </div>
+
+    <div class="npc-inline">
+      <div class="npc-inline-avatar">烛</div>
+      <div>
+        <div class="npc-inline-name">烛阴子</div>
+        <div class="npc-inline-text">
+          "时候到了。两卷灵图已成，现在——<strong style="color:var(--gold)">交换</strong>。<br>
+          见此描述，若感温暖确认，施 <strong style="color:var(--gold)">点灵术 🌤️</strong>；若感意外好奇，施 <strong style="color:var(--purple)">破妄纹 ⚡</strong>。<br>
+          微光乃确认之暖岛，裂隙乃邀请之新域。"
+          <div style="margin-top:8px;font-size:12px;color:rgba(0,255,209,0.6)">
+            💡 看到<strong style="color:var(--gold)">感动/认同</strong>的点🌤️金色；看到<strong style="color:var(--purple)">惊讶/疑惑</strong>的点⚡紫色。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dual-grid">
+      <!-- Parent panel -->
+      <div class="mirror-panel parent">
+        <div class="mirror-title">⚡ 护道者灵图（家长写的）</div>
+        <div id="parent-answers"></div>
+      </div>
+
+      <!-- Divider -->
+      <div class="mirror-divider">
+        <div class="divider-icon">☯</div>
+      </div>
+
+      <!-- Child panel -->
+      <div class="mirror-panel child">
+        <div class="mirror-title">✦ 求道者灵图（孩子写的）</div>
+        <div id="child-answers"></div>
+      </div>
+    </div>
+
+    <div id="resonance-alert" style="display:none;margin-top:20px;padding:20px 24px;background:linear-gradient(135deg,rgba(240,192,96,0.08),rgba(155,114,232,0.08));border:1px solid rgba(240,192,96,0.3);text-align:center;">
+      <div style="font-size:24px;margin-bottom:8px">✨ 两心共鸣，光彻九霄！✨</div>
+      <div style="font-size:14px;color:var(--text-dim)">💡 你们在某件事上想到一起去了！<strong style="color:var(--gold)">默契值 +1</strong></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-action ghost" onclick="goStage(1)">← 返回</button>
+      <button class="btn-action secondary" onclick="goStage(3)">标记完成，召唤太虚 →</button>
+    </div>
+  </div>
+
+  <!-- ========== STAGE 3 ========== -->
+  <div class="stage-panel" id="stage-3">
+    <div class="stage-header">
+      <div class="stage-number">第三关 · STAGE 03</div>
+      <div class="stage-title">真言法会</div>
+      <div class="stage-subtitle">语音/文字共鸣 · NPC引导深谈</div>
+    </div>
+
+    <div class="void-arena">
+      <div class="void-arena-text" id="void-quote">
+        "两卷灵图已成，裂隙处开始透光……<br>此乃「认知图式之异」。<br>
+        护道者以爱之目绘，求道者以真之心感。<br>
+        今日非判高下，乃并置双图，见视角之差——<strong style="color:var(--cyan)">此即理解之始。</strong>"
+      </div>
+    </div>
+
+    <div class="npc-inline">
+      <div class="npc-inline-avatar">烛</div>
+      <div>
+        <div class="npc-inline-name">烛阴子 · 太虚幻境</div>
+        <div class="npc-inline-text">
+          现在，请护道者分享——<br>
+          "<strong style="color:var(--gold)">汝于求道者卷中，见何微光最暖？</strong>"
+          <div style="margin-top:8px;font-size:12px;color:rgba(0,255,209,0.6)">
+            💡 白话：家长，孩子写的哪条最让你感动？说出来让孩子听到。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-card">
+      <div class="share-prompt">🌤️ 护道者发言玉简</div>
+      <textarea class="share-input" id="share-parent" placeholder="在此分享——孩子写的哪一条最让你温暖？为什么？" rows="4" oninput="onShareInput('parent')"></textarea>
+      <div class="ai-followup" id="followup-parent">
+        <strong style="color:var(--purple)">烛阴子追问：</strong>「听汝言此，吾好奇——彼时求道者眼中，可有不同光彩？」<br>
+        <span style="font-size:12px;color:rgba(0,255,209,0.7)">💡 孩子，你愿意回应爸妈说的这句话吗？</span>
+      </div>
+    </div>
+
+    <div class="share-card">
+      <div class="share-prompt" style="color:var(--cyan)">✦ 求道者发言玉简</div>
+      <textarea class="share-input" id="share-child" placeholder="在此分享——爸妈写的哪条让你最意外？或者，你想对他们说什么？" rows="4" oninput="onShareInput('child')"></textarea>
+      <div class="ai-followup" id="followup-child">
+        <strong style="color:var(--purple)">烛阴子追问：</strong>「原来如此——那彼时你心中，是何滋味？可愿多说一二？」<br>
+        <span style="font-size:12px;color:rgba(0,255,209,0.7)">💡 家长，请只听，暂时不要反驳哦。</span>
+      </div>
+    </div>
+
+    <div class="npc-inline" style="border-color:rgba(240,192,96,0.15);">
+      <div class="npc-inline-avatar" style="background:linear-gradient(135deg,#804020,#c09040)">道</div>
+      <div>
+        <div class="npc-inline-name" style="color:var(--gold)">《太虚识典》残卷 · 知识传递</div>
+        <div class="npc-inline-text">
+          用现代心理学说，这叫 <span class="tip" data-tip="每个人因成长经历不同，对同一事物的理解和感受方式有所差异">"<strong>认知差异</strong>"</span>。<br>
+          家长用爱去"看"，孩子用心去"感"。今天不是要争谁对谁错，<br>
+          而是把两张地图拼在一起——<strong style="color:var(--cyan)">原来你看事情的角度和我不一样啊！</strong><br>
+          知道这一点，就是理解的开始。
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-action ghost" onclick="goStage(2)">← 返回</button>
+      <button class="btn-action primary" onclick="goStage(4)">法会圆满，接取契约 →</button>
+    </div>
+  </div>
+
+  <!-- ========== STAGE 4 ========== -->
+  <div class="stage-panel" id="stage-4">
+    <div class="stage-header">
+      <div class="stage-number">第四关 · STAGE 04</div>
+      <div class="stage-title">持光者契约</div>
+      <div class="stage-subtitle">功法传承 · 今夜试炼接取</div>
+    </div>
+
+    <div class="kungfu-card">
+      <div class="kungfu-title">⚔️ 借光诀 · 今夜功法</div>
+
+      <div class="kungfu-rule">
+        <div class="rule-icon">🛡️</div>
+        <div>
+          <div style="font-size:13px;color:var(--gold);margin-bottom:6px">护道者心法（家长）</div>
+          <div class="rule-text">问而非断，听而非评<br>
+            <span style="color:var(--cyan)">✓ 「能多说点吗？」「你的意思是……对吗？」</span></div>
+          <div class="rule-forbidden">✗ 禁止：「你怎么能这么想？」「不对，你应该……」</div>
+        </div>
+      </div>
+
+      <div class="kungfu-rule">
+        <div class="rule-icon">✦</div>
+        <div>
+          <div style="font-size:13px;color:var(--cyan);margin-bottom:6px">求道者心法（孩子）</div>
+          <div class="rule-text">释而非争，明而非藏<br>
+            <span style="color:var(--gold)">✓ 「我当时其实是……」「我想表达的是……」</span></div>
+          <div class="rule-forbidden">✗ 禁止：「你不懂我！」「算了不说了……」</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item-reward">
+      <div class="item-icon">🗝️</div>
+      <div>
+        <div class="item-name">持光者秘钥</div>
+        <div class="item-desc">借此钥，可于今夜开启心门，借光而谈。</div>
+        <div class="item-plain">💡 这是今晚回家后的聊天任务提醒卡</div>
+      </div>
+    </div>
+
+    <div class="item-reward">
+      <div class="item-icon">📜</div>
+      <div>
+        <div class="item-name">今夜试炼卷</div>
+        <div class="item-desc">取卷上一条裂隙，行借光谈话十刻（10分钟）。</div>
+        <div class="item-plain">💡 今晚作业：选一道你们标记了⚡的题目，聊10分钟。<br>孩子多说，家长多问，不吵架，只理解。</div>
+      </div>
+    </div>
+
+    <div class="contract-area">
+      <div class="contract-title">🖋️ 立下契约</div>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px">
+        双方共同签押——今夜必行借光谈话<br>
+        <span style="font-size:12px;color:rgba(0,255,209,0.5)">💡 电子签名 = 拉钩上吊，一百年不许变</span>
+      </div>
+      <div class="sign-area">
+        <div class="sign-box" id="sign-parent" onclick="sign('parent')">
+          <div class="sign-label">护道者（家长）签押</div>
+          <div class="sign-mark" id="signmark-parent">护</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:6px" id="signed-parent-text"></div>
+        </div>
+        <div class="sign-box" id="sign-child" onclick="sign('child')">
+          <div class="sign-label">求道者（孩子）签押</div>
+          <div class="sign-mark" id="signmark-child">求</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:6px" id="signed-child-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-action ghost" onclick="goStage(3)">← 返回</button>
+      <button class="btn-action primary" id="btn-complete" onclick="complete()">契约已立，完成本课 ✓</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===========================
+     SCREEN 4: COMPLETE
+=========================== -->
+<div id="screen-complete" class="screen hidden gone">
+  <div class="complete-icon">🌟</div>
+  <div class="complete-title">破壁成功！</div>
+  <p class="complete-text">
+    两张灵图已并置，裂隙已成光之通道。<br>
+    你们的双生地图已保存至「藏经阁」。<br><br>
+    今夜试炼已接取——<strong style="color:var(--gold)">10分钟，只是理解的开始。</strong>
+  </p>
+
+  <div class="rewards-grid">
+    <div class="reward-chip">🏅 称号解锁：破壁者</div>
+    <div class="reward-chip">⚡ 元力值 +50</div>
+    <div class="reward-chip">📖 图鉴：太虚识典·第一页</div>
+  </div>
+
+  <div class="teaser-box">
+    烛阴子：「三日后，汝等将化身<strong style="color:var(--purple)">心流侦探</strong>，<br>
+    于识海中寻专注之火种……」<br><br>
+    <span style="font-size:12px;color:rgba(0,255,209,0.6)">
+      💡 下次课（第3天），我们要找让你进入忘我状态的那些事——<br>
+      打游戏、画画、解数学题时的那种「爽感」。
+    </span>
+  </div>
+
+  <button class="btn-action secondary" onclick="restart()">重新开始 / 保存记录</button>
+</div>
+
+<!-- crack overlay -->
+<div class="crack-overlay" id="crack-overlay">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path d="M50,50 L45,30 L42,10" stroke="rgba(155,114,232,0.3)" stroke-width="0.3" fill="none"/>
+    <path d="M50,50 L62,40 L80,35" stroke="rgba(0,255,209,0.2)" stroke-width="0.2" fill="none"/>
+    <path d="M50,50 L55,65 L48,85" stroke="rgba(240,192,96,0.25)" stroke-width="0.25" fill="none"/>
+    <path d="M50,50 L35,55 L20,62" stroke="rgba(201,98,106,0.2)" stroke-width="0.2" fill="none"/>
+  </svg>
+</div>
+
+<script>
+// ===========================
+// STATE
+// ===========================
+const state = {
+  currentStage: 0,
+  currentRole: 'parent',
+  oath: { parent: false, child: false },
+  marks: {},
+  signed: { parent: false, child: false },
+  dialogueIndex: 0
+};
+
+const dialogues = [
+  {
+    text: "欢迎踏入识海关。我是守境人烛阴子，掌管此地的「光之法则」。",
+    hint: "（银发少年调整单片眼镜，展开发光卷轴）",
+    trans: null
+  },
+  {
+    text: "你们看周围这迷雾——它不是障碍，而是你们各自心域的边界。",
+    hint: "（手势一扫，迷雾轻轻涌动）",
+    trans: "💡 白话：每个人看待世界的方式都不一样，这很正常。"
+  },
+  {
+    text: "墙壁护人安全，亦隔绝了星光。今日我们不拆墙，只拍一张「灵识X光」——看清纹理，发现那天然的缝隙。",
+    hint: "（卷轴展开，显示两张交叠的地图影像）",
+    trans: "💡 白话：我们不是来吵架的，而是来互相了解的。"
+  },
+  {
+    text: "记住：缝隙不是破损，是光与风唯一的通道。护道者（家长）手持「外境图」，求道者（孩子）内藏「心域图」。",
+    hint: "（双眼闪烁金光，语气温柔而坚定）",
+    trans: "💡 白话：你们理解不同的地方，恰恰是了解彼此的入口。"
+  },
+  {
+    text: "只有当两图交叠，那些看似错位的「裂隙」，才会成为光之通道……准备好了吗？",
+    hint: "（卷轴化为两枚玉简，飞向屏幕两端）",
+    trans: null
+  }
+];
+
+// ===========================
+// CANVAS PARTICLES
+// ===========================
+(function initCanvas() {
+  const canvas = document.getElementById('canvas-bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const colors = ['rgba(155,114,232,', 'rgba(0,255,209,', 'rgba(240,192,96,'];
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.5 + 0.3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: Math.random() * 0.4 + 0.1,
+      life: Math.random()
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw lines between close particles
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(155,114,232,${0.04 * (1 - d / 120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    particles.forEach(p => {
+      p.life += 0.005;
+      const a = p.alpha * Math.sin(p.life * Math.PI);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + Math.max(0, a) + ')';
+      ctx.fill();
+
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      if (p.life > 1) { p.life = 0; p.alpha = Math.random() * 0.4 + 0.1; }
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===========================
+// TYPEWRITER
+// ===========================
+function typewrite(el, text, speed = 35, cb) {
+  el.textContent = '';
+  let i = 0;
+  function tick() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      setTimeout(tick, speed);
+    } else { if (cb) cb(); }
+  }
+  tick();
+}
+
+// ===========================
+// SCREENS
+// ===========================
+function switchScreen(fromId, toId) {
+  const from = document.getElementById(fromId);
+  const to = document.getElementById(toId);
+  from.classList.add('hidden');
+  setTimeout(() => {
+    from.classList.add('gone');
+    to.classList.remove('gone');
+    setTimeout(() => to.classList.remove('hidden'), 50);
+  }, 800);
+}
+
+function startGame() {
+  switchScreen('screen-landing', 'screen-cutscene');
+  setTimeout(() => showDialogue(0), 1000);
+}
+
+function showDialogue(idx) {
+  const d = dialogues[idx];
+  const textEl = document.getElementById('npc-text');
+  const hintEl = document.getElementById('npc-hint');
+  const transEl = document.getElementById('npc-translate');
+  const nextBtn = document.getElementById('btn-cutscene-next');
+
+  nextBtn.disabled = true;
+  typewrite(textEl, d.text, 30, () => { nextBtn.disabled = false; });
+  hintEl.textContent = d.hint || '';
+
+  if (d.trans) {
+    transEl.style.display = 'block';
+    transEl.textContent = d.trans;
+  } else {
+    transEl.style.display = 'none';
+  }
+
+  state.dialogueIndex = idx;
+  nextBtn.textContent = idx < dialogues.length - 1 ? '继续 ›' : '开始试炼 →';
+}
+
+function nextDialogue() {
+  if (state.dialogueIndex < dialogues.length - 1) {
+    showDialogue(state.dialogueIndex + 1);
+  } else {
+    switchScreen('screen-cutscene', 'screen-game');
+    goStage(1);
+  }
+}
+
+// ===========================
+// STAGE NAVIGATION
+// ===========================
+function goStage(n) {
+  document.querySelectorAll('.stage-panel').forEach((p, i) => {
+    p.classList.toggle('active', i + 1 === n);
+  });
+  for (let i = 1; i <= 4; i++) {
+    const node = document.getElementById('node-' + i);
+    node.classList.remove('active', 'done');
+    if (i < n) node.classList.add('done');
+    if (i === n) node.classList.add('active');
+  }
+  state.currentStage = n;
+  if (n === 2) renderAnswers();
+  document.getElementById('screen-game').scrollTo(0, 0);
+}
+
+// ===========================
+// STAGE 1 LOGIC
+// ===========================
+function switchRole(role) {
+  state.currentRole = role;
+  document.getElementById('rbtn-parent').classList.toggle('active', role === 'parent');
+  document.getElementById('rbtn-child').classList.toggle('active', role === 'child');
+  document.getElementById('form-parent').classList.toggle('active', role === 'parent');
+  document.getElementById('form-child').classList.toggle('active', role === 'child');
+}
+
+function toggleTrans(btn) {
+  const box = btn.nextElementSibling;
+  const shown = box.style.display === 'block';
+  box.style.display = shown ? 'none' : 'block';
+  btn.textContent = shown ? '💡 烛老师说人话' : '📜 查看原文';
+}
+
+function toggleOath(role) {
+  state.oath[role] = !state.oath[role];
+  const box = document.getElementById('oath-' + role);
+  box.classList.toggle('active', state.oath[role]);
+}
+
+// ===========================
+// STAGE 2 LOGIC
+// ===========================
+const questions = [
+  { p: '微光侦测', c: '微光自察' },
+  { p: '压力地貌', c: '压力自陈' },
+  { p: '未标之地', c: '秘境自观' }
+];
+
+function renderAnswers() {
+  const parentContainer = document.getElementById('parent-answers');
+  const childContainer = document.getElementById('child-answers');
+  parentContainer.innerHTML = '';
+  childContainer.innerHTML = '';
+
+  for (let i = 1; i <= 3; i++) {
+    const pVal = document.getElementById('p_q' + i)?.value || '';
+    const cVal = document.getElementById('c_q' + i)?.value || '';
+
+    parentContainer.appendChild(makeAnswerItem(i, questions[i-1].p, pVal, 'p'));
+    childContainer.appendChild(makeAnswerItem(i, questions[i-1].c, cVal, 'c'));
+  }
+}
+
+function makeAnswerItem(i, label, text, prefix) {
+  const div = document.createElement('div');
+  div.className = 'answer-item';
+  div.id = `item-${prefix}-${i}`;
+  const hasText = text.trim().length > 0;
+  div.innerHTML = `
+    <div class="answer-q">Q${i} · ${label}</div>
+    <div class="answer-text ${hasText ? '' : 'empty'}">${hasText ? escapeHtml(text) : '（未填写）'}</div>
+    <div class="mark-row">
+      <button class="mark-btn gold" data-p="${prefix}" data-q="${i}" data-m="gold" onclick="toggleMark(this)">🌤️ 点灵术</button>
+      <button class="mark-btn purple" data-p="${prefix}" data-q="${i}" data-m="purple" onclick="toggleMark(this)">⚡ 破妄纹</button>
+    </div>
+    <div class="resonance-badge" id="res-${prefix}-${i}">✨ 共鸣！</div>
+  `;
+  return div;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function toggleMark(btn) {
+  const p = btn.dataset.p;
+  const q = btn.dataset.q;
+  const m = btn.dataset.m;
+  const key = `${p}-${q}-${m}`;
+  const isActive = btn.classList.toggle('active');
+
+  // Deactivate other mark type for same answer
+  const otherM = m === 'gold' ? 'purple' : 'gold';
+  const otherKey = `${p}-${q}-${otherM}`;
+  const otherBtn = document.querySelector(`[data-p="${p}"][data-q="${q}"][data-m="${otherM}"]`);
+  if (isActive && otherBtn) { otherBtn.classList.remove('active'); delete state.marks[otherKey]; }
+
+  if (isActive) state.marks[key] = true;
+  else delete state.marks[key];
+
+  checkResonance(q);
+}
+
+function checkResonance(q) {
+  const pGold = !!state.marks[`p-${q}-gold`];
+  const cGold = !!state.marks[`c-${q}-gold`];
+  const resonates = pGold && cGold;
+
+  document.getElementById(`res-p-${q}`).style.display = resonates ? 'block' : 'none';
+  document.getElementById(`res-c-${q}`).style.display = resonates ? 'block' : 'none';
+
+  const anyResonance = [1,2,3].some(qi => state.marks[`p-${qi}-gold`] && state.marks[`c-${qi}-gold`]);
+  document.getElementById('resonance-alert').style.display = anyResonance ? 'block' : 'none';
+
+  if (resonates) {
+    document.getElementById('crack-overlay').classList.add('show');
+    setTimeout(() => document.getElementById('crack-overlay').classList.remove('show'), 2000);
+  }
+}
+
+// ===========================
+// STAGE 3 LOGIC
+// ===========================
+function onShareInput(role) {
+  const val = document.getElementById('share-' + role).value;
+  if (val.length > 20) {
+    const followup = document.getElementById('followup-' + role);
+    followup.style.display = 'block';
+  }
+}
+
+// ===========================
+// STAGE 4 LOGIC
+// ===========================
+function sign(role) {
+  if (state.signed[role]) return;
+  state.signed[role] = true;
+  const box = document.getElementById('sign-' + role);
+  box.classList.add('signed');
+  const txt = document.getElementById('signed-' + role + '-text');
+  txt.textContent = '已签押 ' + new Date().toLocaleTimeString('zh-CN');
+
+  if (state.signed.parent && state.signed.child) {
+    const btn = document.getElementById('btn-complete');
+    btn.style.background = 'linear-gradient(135deg, var(--gold-dim), var(--gold))';
+    btn.style.boxShadow = '0 0 30px rgba(240,192,96,0.4)';
+  }
+}
+
+function complete() {
+  switchScreen('screen-game', 'screen-complete');
+}
+
+function restart() {
+  location.reload();
+}
+</script>
+</body>
+</html>
